@@ -1,0 +1,120 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Main.gd" type="Script" id=1]
+[ext_resource path="res://Analyzer.gd" type="Script" id=2]
+[ext_resource path="res://UI/Output.gd" type="Script" id=3]
+[ext_resource path="res://UI/TextEdit.gd" type="Script" id=4]
+[ext_resource path="res://Player/PlayerController.gd" type="Script" id=5]
+[ext_resource path="res://Game.tscn" type="PackedScene" id=6]
+
+[node name="Main" type="Node2D"]
+pause_mode = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="UI" type="Control" parent="."]
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Analyze" type="Button" parent="UI"]
+margin_left = 325.73
+margin_top = 42.0
+margin_right = 419.73
+margin_bottom = 69.0
+text = "Run"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Stop" type="Button" parent="UI"]
+margin_left = 326.0
+margin_top = 84.0
+margin_right = 420.0
+margin_bottom = 111.0
+text = "Stop"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextEdit" type="TextEdit" parent="UI"]
+margin_left = 74.0
+margin_top = 42.0
+margin_right = 305.0
+margin_bottom = 462.0
+text = "PUT A 0
+START
+CALL MOVE R
+CALL MOVE R
+CALL MOVE R
+CALL JUMP 1
+PUT A A+1
+JI A>5 END
+JU START
+END
+JU END"
+highlight_current_line = true
+syntax_highlighting = true
+show_line_numbers = true
+draw_tabs = true
+draw_spaces = true
+highlight_all_occurrences = true
+smooth_scrolling = true
+hiding_enabled = true
+wrap_enabled = true
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="UI"]
+margin_left = 74.0
+margin_top = 495.0
+margin_right = 1205.0
+margin_bottom = 680.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Output" type="RichTextLabel" parent="UI/Panel"]
+margin_right = 1131.0
+margin_bottom = 185.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Analyzer" type="Node" parent="."]
+script = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="Analyzer"]
+
+[node name="PlayerController" type="Node" parent="."]
+script = ExtResource( 5 )
+
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+margin_left = 452.0
+margin_top = 42.0
+margin_right = 1205.0
+margin_bottom = 462.0
+stretch = true
+stretch_shrink = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="ViewportContainer"]
+size = Vector2( 376, 210 )
+size_override_stretch = true
+transparent_bg = true
+handle_input_locally = false
+hdr = false
+usage = 0
+render_target_update_mode = 3
+
+[node name="Game" parent="ViewportContainer/Viewport" instance=ExtResource( 6 )]
+pause_mode = 1
+[connection signal="pressed" from="UI/Analyze" to="Analyzer" method="_on_Analyze_pressed"]
+[connection signal="pressed" from="UI/Stop" to="Analyzer" method="_on_Stop_pressed"]
