@@ -3,32 +3,35 @@ Logical:
 	While() | Until()?? Maybe use goto instead
 	goto requires comprehensive ifs to feel good
 
-	JI // jump if true
-	JI (expression)
+	[+]	JI // jump if true | JI (expression)
 
-	expression = (expression_) {&, |} (expression_) ...
+	[-] expression evaluation:
+		[+] recursive eval from right
+		[+] can reference variable
+		[+] do single char operations {'+', '-', '/', '*', ..} 
+		[-] {"==", "<=", ">=", .. does not work due to current way of parsing}
 
-	atomic_expression = (x {<,=,>} 1) (d {<,=,>} e) : x,d,e can be expressions but theres no {&,|} 
+		expression = (expression_) {&, |} (expression_) ...
+		atomic_expression = (x {<,=,>} 1) (d {<,=,>} e) : x,d,e can be expressions but theres no {&,|} 
 
 Commands:
 	Called with:
-	CALL command [args...]
+	[+] CALL command [args...]
 
-	Move([R|L], duration=delta)  : amount of movement determined by character speed, if you use this with distance {duration = dist/GetSpeedDir} can be used
+	[+] Move([R|L], duration=delta)  : amount of movement determined by character speed, if you use this with distance {duration = dist/GetSpeedDir} can be used
 
-	Jump(strength) : strength=clamp(strength, 0, 1)
+	[+]	Jump(strength) : strength=clamp(strength, 0, 1)
 
-	ProjectileAttack(direction2D)
+	[-] ProjectileAttack(direction2D)
 
 Queries:
-	GetDist_U, GetDist_L, ..
-	GetVel
+	[-] GetDist_U, GetDist_L, ..
+	[-] GetVel
 
-Code example
 
+Code example:
 go until you hit a wall
 jump when you hit a wall
-
 -> ___----____
 
 0	FLAG_0 {flag}

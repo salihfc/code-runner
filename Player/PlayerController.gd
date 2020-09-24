@@ -19,5 +19,6 @@ func throw(direction:Vector2) -> void:
 	pass
 
 
-func get_dist(direction) -> float:
+func get_dist(direction_string) -> float:
+	var direction = GLOBAL.letter_to_direction[direction_string]
 	return GLOBAL.Player.get_dist(direction)
