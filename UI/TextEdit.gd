@@ -4,19 +4,21 @@ var keywords = {
 	"JU" : Color.orange,
 	"JI" : Color.orange,
 	"JN" : Color.orange,
-	"JUMP" : Color.orange,
-	"MOVE" : Color.orange,
-	"GD_U" : Color.orange,
-	"GD_L" : Color.orange,
-	"GD_R" : Color.orange,
-	"GD_D" : Color.orange,
+	"CALL" : Color.orange,
+	"WHILE" : Color.orange,
+	
+	"JUMP" : Color.blueviolet,
+	"MOVE" : Color.blueviolet,
+	"GD_U" : Color.blueviolet,
+	"GD_L" : Color.blueviolet,
+	"GD_R" : Color.blueviolet,
+	"GD_D" : Color.blueviolet,
 	
 	"U" : Color.blanchedalmond,
 	"L" : Color.blanchedalmond,
 	"R" : Color.blanchedalmond,
 	"D" : Color.blanchedalmond,
 	
-	"CALL" : Color.greenyellow,
 }
 
 func _ready() -> void:

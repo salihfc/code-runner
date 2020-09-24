@@ -5,11 +5,11 @@ Logical:
 
 	[+]	JI // jump if true | JI (expression)
 
-	[-] expression evaluation:
+	[+] expression evaluation:
 		[+] recursive eval from right
 		[+] can reference variable
 		[+] do single char operations {'+', '-', '/', '*', ..} 
-		[-] {"==", "<=", ">=", .. does not work due to current way of parsing}
+		[+] {"==", "<=", ">=", .. does not work due to current way of parsing}
 
 		expression = (expression_) {&, |} (expression_) ...
 		atomic_expression = (x {<,=,>} 1) (d {<,=,>} e) : x,d,e can be expressions but theres no {&,|} 
@@ -25,7 +25,7 @@ Commands:
 	[-] ProjectileAttack(direction2D)
 
 Queries:
-	[-] GetDist_U, GetDist_L, ..
+	[+] GetDist_U, GetDist_L, ..
 	[-] GetVel
 
 

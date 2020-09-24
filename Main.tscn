@@ -44,10 +44,7 @@ margin_left = 74.0
 margin_top = 42.0
 margin_right = 305.0
 margin_bottom = 462.0
-text = "GD_L
-GD_R
-END
-JU END"
+text = "CALL MOVE R"
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true

@@ -15,6 +15,10 @@ var jump_table = {
 
 var flag_lines = []
 
+var while_binds = {
+	"label_name" : "wrap_to"
+}
+
 var var_table = {
 	"variable_name" : "value",
 }
@@ -62,20 +66,26 @@ func _process(delta: float) -> void:
 	if processing and current_line < lines.size():
 		text_edit.cursor_set_line(current_line)
 		
-		if current_line_processed and ((not _DELAY_ACTIVE) or line_timer.time_left < 0.01): # go to next line
+		if current_line_processed and\
+			((not _DELAY_ACTIVE) or line_timer.time_left < 0.01): 
+			# go to next line
+			
 			current_line_processed = false
 #			prints("current line: [%s]" % current_line)
 			line_timer.start(_LINE_TIME)
 			run_instruction(current_line)
 			current_line_processed = true
-	elif current_line == lines.size():
-		current_line = 0
+#	elif current_line == lines.size():
+#		current_line = 0
 
 func run_instruction(line_number:int) -> void:
 
 	# line is flag -> skip
 	if flag_lines.has(line_number):
-		current_line += 1
+		if while_binds.has(lines[line_number]):
+			current_line = while_binds[lines[line_number]]
+		else:
+			current_line += 1
 		return
 
 	# instruction argument count assumed to be maximum 3
@@ -85,14 +95,14 @@ func run_instruction(line_number:int) -> void:
 	match op:
 		"JU": # Jump Unconditionally [JU] [TARGET:FLAG]
 			var jump_target = args[1]
-			if jump_table.has(jump_target):
+			if !while_binds.has(jump_target) and jump_table.has(jump_target):
 				current_line = jump_table[jump_target]
 			else:
 				assert(0)
 		"JI", "JN": # Jump If | Jump Not If
 			var target_truth_val = (op == "JI")
 			var jump_target = args[2] # [JI] [EXP] [TARGET]
-			if jump_table.has(jump_target):
+			if !while_binds.has(jump_target) and jump_table.has(jump_target):
 				var evaluation = evaluate_expression(args[1])
 				if bool(evaluation) == target_truth_val:
 					current_line = jump_table[jump_target]
@@ -119,6 +129,19 @@ func run_instruction(line_number:int) -> void:
 			var func_args = args[2].split(" ")
 			call_func(func_name, func_args)
 			current_line += 1
+
+		"WHILE": # WHILE EXPRESSION LABEL
+			var jump_target = args[2] # [JI] [EXP] [TARGET]
+			var evaluation = evaluate_expression(args[1])
+			
+			if while_binds.has(jump_target):
+				if bool(evaluation):
+					current_line += 1
+				else:
+					current_line = (jump_table[jump_target] + 1)
+			else:
+				assert(0)
+				
 		_:
 #			prints("Warning: line skipped [%s]" % line_number)
 			evaluate_expression(op)
@@ -174,13 +197,26 @@ func prepass() -> void:
 			else:
 				if jump_table.has(args[0]):
 					# return syntax error
-					prints("duplicate jump_flags at [%s, %s] Flag:{%s}" % [i, jump_table[args[0]], args[0]])
+					prints("duplicate jump_flags at [%s, %s] Flag:{%s}" %\
+					[i, jump_table[args[0]], args[0]])
 					assert(0)
 				else:
 					jump_table[args[0]] = i
-					GLOBAL.input_text_editor.add_keyword_color(args[0], Color.green)
+					GLOBAL.input_text_editor.\
+						add_keyword_color(args[0], Color.green)
 					flag_lines.append(i)
-		
+	
+	for i in line_count:
+		prints("%s :: %s" % [i, lines[i]])
+		var line = lines[i]
+		var args = line.split(" ")
+		if args[0] == "WHILE":
+			var label = args[2]
+			
+			if not jump_table.has(label):
+				assert(0)
+			else:
+				while_binds[label] = i
 
 func is_keyword(word : String) -> bool:
 	return GLOBAL.keywords.has(word)
@@ -284,7 +320,8 @@ func call_func(fname:String, args:Array) -> void:
 			if args.size() == 1:
 				Player.throw_to_angle(float(args[0]))
 			else:
-				Player.throw_to_direction(Vector2(float(args[0]), float(args[1])))
+				Player.throw_to_direction(\
+					Vector2(float(args[0]), float(args[1])))
 		_:
 			pass
 
