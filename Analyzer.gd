@@ -117,6 +117,7 @@ func _process(delta: float) -> void:
 #	elif current_line == lines.size():
 #		current_line = 0
 
+
 func run_instruction(line_number:int) -> void:
 
 	# line is flag -> skip
@@ -190,7 +191,7 @@ func run_instruction(line_number:int) -> void:
 				
 		_:
 #			prints("Warning: line skipped [%s]" % line_number)
-			evaluate_expression(op)
+			evaluate_expression(lines[line_number])
 			current_line += 1
 			pass
 	
@@ -217,6 +218,7 @@ func analyze() -> void:
 
 func split(text:String, delim:String) -> PoolStringArray:
 	return text.split(delim, false)
+
 
 
 func validate() -> void:
@@ -255,16 +257,15 @@ func prepass() -> void:
 	for i in line_count:
 		prints("%s :: %s" % [i, lines[i]])
 		var line = lines[i]
-#		if args[0] == "WHILE":
 		if line.begins_with("WHILE"):
 			var args = line.lstrip("WHILE ")
 			var last_space = args.rfind(" ")
 			var label = args.right(last_space+1)
-			
 			if not jump_table.has(label):
 				assert(0)
 			else:
 				while_binds[label] = i
+
 
 func is_keyword(word : String) -> bool:
 	return GLOBAL.keywords.has(word)
@@ -450,7 +451,6 @@ func replace_symbols(expression : String) -> String:
 	return result
 	
 	
-
 func is_valid_basic(expression:String) -> bool:
 
 	if expression.is_valid_integer():
@@ -506,9 +506,6 @@ func call_func(fname:String, args:Array) -> void:
 
 
 func query(qname:String):
-	
-#	prints("query_called [%s]" % qname)
-	
 	match qname:
 		"GD_U", "GD_L", "GD_D", "GD_R", "GD_UL", "GD_LU", "GD_DR", "GD_RD",\
 		"GD_UR", "GD_LD", "GD_DL", "GD_RU":

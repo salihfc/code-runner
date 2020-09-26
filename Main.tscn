@@ -14,6 +14,10 @@ __meta__ = {
 "_edit_group_": true
 }
 
+[node name="SaveTimer" type="Timer" parent="."]
+wait_time = 60.0
+autostart = true
+
 [node name="UI" type="Control" parent="."]
 __meta__ = {
 "_edit_use_anchors_": false
@@ -56,8 +60,6 @@ JU START"
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
-draw_tabs = true
-draw_spaces = true
 highlight_all_occurrences = true
 smooth_scrolling = true
 hiding_enabled = true
@@ -116,5 +118,7 @@ render_target_update_mode = 3
 
 [node name="Game" parent="ViewportContainer/Viewport" instance=ExtResource( 6 )]
 pause_mode = 1
+[connection signal="tree_exiting" from="." to="." method="_on_Main_tree_exiting"]
+[connection signal="timeout" from="SaveTimer" to="." method="_on_SaveTimer_timeout"]
 [connection signal="pressed" from="UI/Analyze" to="Analyzer" method="_on_Analyze_pressed"]
 [connection signal="pressed" from="UI/Stop" to="Analyzer" method="_on_Stop_pressed"]

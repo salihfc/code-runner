@@ -30,8 +30,8 @@ var keywords = {
 }
 
 func _ready() -> void:
-	
 	GLOBAL.input_text_editor = self
-
 	for keyword in keywords:
 		add_keyword_color(keyword, keywords[keyword])
+	
+	text = SAVE.get_text()
