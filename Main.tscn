@@ -44,7 +44,15 @@ margin_left = 74.0
 margin_top = 42.0
 margin_right = 305.0
 margin_bottom = 462.0
-text = "CALL MOVE R"
+text = "PUT jumped 0
+START
+WHILE (GD_R>9) && (GD_DR < 9) || ((GD_DR > 10) && (jumped==1)) WRAP
+CALL MOVE R
+PUT jumped 0
+WRAP
+CALL JUMP 1
+PUT jumped 1
+JU START"
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
@@ -80,6 +88,8 @@ __meta__ = {
 script = ExtResource( 2 )
 
 [node name="Timer" type="Timer" parent="Analyzer"]
+
+[node name="Evaluator" type="Node" parent="Analyzer"]
 
 [node name="PlayerController" type="Node" parent="."]
 script = ExtResource( 5 )

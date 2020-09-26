@@ -5,6 +5,8 @@ onready var Game = $ViewportContainer/Viewport/Game
 func _ready() -> void:
 	get_tree().paused = true
 	Game.pause_mode = PAUSE_MODE_STOP
+	
+
 
 func _process(delta: float) -> void:
 	

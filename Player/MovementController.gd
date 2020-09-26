@@ -7,8 +7,8 @@ func move(direction: Vector2) -> void:
 
 func jump(multiplier) -> void:
 	
-	prints("jump command [%s]" % player.is_on_floor())
+#	prints("jump command [%s]" % player.is_on_floor())
 	if player.is_on_floor():
-		prints("player jumping")
+#		prints("player jumping")
 		player.velocity += Vector2.UP * player.jump_strength * multiplier
 	

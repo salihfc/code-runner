@@ -17,11 +17,18 @@ var direction_name = {
 	3 : "Left"
 }
 
+var direction_to_letter = {
+	DIRECTION.UP : "U",
+	DIRECTION.RIGHT : "R",
+	DIRECTION.DOWN : "D",
+	DIRECTION.LEFT : "L",
+}
+
 var letter_to_direction = {
 	"U" : DIRECTION.UP,
-	"L" : DIRECTION.LEFT,
-	"D" : DIRECTION.DOWN,
 	"R" : DIRECTION.RIGHT,
+	"D" : DIRECTION.DOWN,
+	"L" : DIRECTION.LEFT,
 }
 
 var keywords = [
@@ -30,11 +37,22 @@ var keywords = [
 	"JN" ,
 	"JUMP" ,
 	"MOVE" ,
+
 	"GD_U" ,
 	"GD_L" ,
 	"GD_R" ,
 	"GD_D" ,
-	
+
+	"GD_UL" ,
+	"GD_LU" ,
+	"GD_RD" ,
+	"GD_DR" ,
+
+	"GD_UR" ,
+	"GD_LD" ,
+	"GD_RU" ,
+	"GD_DL" ,
+
 	"U" ,
 	"L" ,
 	"R" ,

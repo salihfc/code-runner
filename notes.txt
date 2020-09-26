@@ -39,3 +39,6 @@ jump when you hit a wall
 2	JI (GetDist_R > 0.1) FLAG_0
 3	Jump(1)
 4	Move r
+
+Expression parsing:
+(GD_R>9)*(GD_DR<9)

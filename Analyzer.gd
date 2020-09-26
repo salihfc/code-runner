@@ -4,6 +4,7 @@ onready var main = get_parent()
 onready var text_edit = get_parent().get_node("UI/TextEdit")
 onready var output = get_parent().get_node("UI/Panel/Output")
 onready var Player = get_parent().get_node("PlayerController")
+onready var evaluator = $Evaluator
 
 signal new_analysis(text)
 
@@ -28,6 +29,11 @@ var operators = [
 	"-",
 	"/",
 	"*",
+	
+	"&",
+	"&&",
+	"|",
+	"||",
 
 	">",
 	"<",
@@ -37,11 +43,44 @@ var operators = [
 	">=",
 ]
 
+var symbols = [
+	"+",
+	"-",
+	"/",
+	"*",
+	
+	"&",
+	"|",
+
+	">",
+	"<",
+	
+	"=",
+	"==",
+	"<=",
+	">=",
+	
+	"(",
+	")",
+]
+
 var query_table = [
 	"GD_U",
 	"GD_D",
 	"GD_L",
 	"GD_R",
+	
+	"GD_UL",
+	"GD_UR",
+	
+	"GD_DL",
+	"GD_DR",
+	
+	"GD_LU",
+	"GD_LD",
+
+	"GD_RU",
+	"GD_RD",
 ]
 
 var processing := false
@@ -132,7 +171,14 @@ func run_instruction(line_number:int) -> void:
 
 		"WHILE": # WHILE EXPRESSION LABEL
 			var jump_target = args[2] # [JI] [EXP] [TARGET]
-			var evaluation = evaluate_expression(args[1])
+			var expression = lines[line_number].lstrip("WHILE ")
+			var last_space = expression.rfind(" ")
+			
+			jump_target = expression.right(last_space + 1)
+			expression = expression.left(last_space)
+			var evaluation = evaluate_expression(expression)
+			
+			prints("WHILE eval=> %s = %s" % [expression, evaluation])
 			
 			if while_binds.has(jump_target):
 				if bool(evaluation):
@@ -209,9 +255,11 @@ func prepass() -> void:
 	for i in line_count:
 		prints("%s :: %s" % [i, lines[i]])
 		var line = lines[i]
-		var args = line.split(" ")
-		if args[0] == "WHILE":
-			var label = args[2]
+#		if args[0] == "WHILE":
+		if line.begins_with("WHILE"):
+			var args = line.lstrip("WHILE ")
+			var last_space = args.rfind(" ")
+			var label = args.right(last_space+1)
 			
 			if not jump_table.has(label):
 				assert(0)
@@ -229,56 +277,179 @@ func print_jump_table() -> void:
 	prints("---")
 
 
+func match_paranthesis(expression, it :int) -> int:
+	
+	var n :int= expression.length()
+	var ct :int= 0
+	
+	while(it < n):
+		
+		if expression[it] == "(":
+			ct += 1
+		elif expression[it] == ")":
+			ct -= 1
+			if ct == 0:
+				return it
+		
+		it += 1
+	
+	return -1
+	
+
 func evaluate_expression(expression : String):
+	
+	expression = expression.split(" ").join("")
+	
+	# replace '(a)' with eval(a)
+	var cur :int = 0
+	
+	while cur < expression.length():
+		var it = expression.find("(", cur)
+		
+		if it != -1:
+			var end = match_paranthesis(expression, it)
+			
+			if end != -1:
+				var par_exp = expression.substr(it + 1, end - it - 1)
+				var result = String(evaluate_expression(par_exp))
+				
+				expression = expression.substr(0, it) + result\
+				 					+ expression.substr(end+1, -1)
+				cur = it + result.length()
+
+			else:
+				prints("unmatched paranthesis from idx[%s]" % it)
+				assert(0)
+		else:
+			break
+	
+	# at this point all of the parenthesized expresssions resolved
+	# do evaluation from rightmost operator 
+	
+	expression = replace_symbols(expression)
+	
+	# -------------------------------------------------------
 	# base case:
 	# expression is a var_ref or a basicval{int,float,string}
+
+	if is_valid_basic(expression):	
+		return to_basic(expression)
+
 	if var_table.has(expression):
 		return var_table[expression]
-	
+
 	if query_table.has(expression):
 		var result = query(expression)
 		prints("query %s result: %s" % [expression, result])
 		return result
-	
-	if is_valid_basic(expression):
-		return to_basic(expression)
-	
-	# recur
-	# find last operator
-	#var it = expression.length() - 1
-	
-	#while(it >= 0):
-	#	if is_operator(expression[it]):
-	#		break
-	#	it-=1
-	
-	# if it == -1: # edge
-		# return 0
 
+
+	
+	# find LAST operator ---------------------------------------
+	var n:int= expression.length()
+	cur = -1
 	var it = -1
 	var op
 	var op_len = 1
 
-	for operator in operators:
-#		prints("operator: [%s]" % operator)
-		var found = expression.find_last(operator)
+	while(cur < n):
 
-		if (found > it):
-			it = found
-			op = operator
-			op_len = operator.length()
+		match expression[cur]:
+			"+", "-", "/", "*":
+				it = cur
+				op = expression[cur]
+
+			"&", "|":
+				var tmp = expression[cur]
+				it = cur
+				if cur<n-1 and expression[cur+1] == tmp:
+					op = tmp + tmp
+					cur += 2
+				else:
+					op = tmp
+					cur += 1
 			
-	if it == -1:
+			"=":
+				it = cur
+				if cur<n-1 and expression[cur+1] == "=":
+					op = "=="
+					cur += 2
+				else:
+					op = "="
+					cur += 1
+			
+			"<", ">":
+				it = cur
+				var tmp = expression[cur]
+				it = cur
+				if cur<n-1 and expression[cur+1] == "=":
+					op = tmp + "="
+					cur += 2
+				else:
+					op = tmp
+					cur += 1
+			
+			_:
+				cur += 1
+	
+	if it < 0:
 		assert(0)
 
+	## --------------------------------------------------
+
 	var exp1 = expression.substr(0, it)
-	var exp2 = expression.substr(it + op_len, -1)
-	
+	var exp2 = expression.substr(it + op.length(), -1)
+
 	var eval_left = evaluate_expression(exp1)
 	var eval_right = evaluate_expression(exp2)
-	
+
 	return eval(eval_left, eval_right, op)
 
+
+func replace_symbols(expression : String) -> String:
+	var result := ""
+	var s := expression
+	var n :int= expression.length()
+	var it :int= 0
+	
+	while(it < n):
+		
+		var first_letter :int= it
+		
+		while(first_letter < n and symbols.has(s[first_letter])):
+			result += s[first_letter]
+			first_letter +=1
+		
+		var last_letter := first_letter
+		
+		while(last_letter < n and not symbols.has(s[last_letter])):
+			last_letter += 1
+		
+		# [first, last) last not included
+		
+		var identifier_name = s.substr(first_letter, last_letter - first_letter)
+		
+		if is_valid_basic(identifier_name):
+			result += identifier_name
+		
+		elif var_table.has(identifier_name):
+			result += String(var_table[identifier_name])
+		
+		elif query_table.has(identifier_name):
+			result += String(query(identifier_name))
+		
+		elif identifier_name == "":
+			break
+		
+		else:
+			prints("identifier cannot found [%s]" % identifier_name)
+			assert(0)
+
+		it = last_letter
+
+	return result
+	
+	
 
 func is_valid_basic(expression:String) -> bool:
 
@@ -286,6 +457,9 @@ func is_valid_basic(expression:String) -> bool:
 		return true
 		
 	if expression.is_valid_float():
+		return true
+
+	if expression == "True" or expression == "False":
 		return true
 	
 	return false
@@ -299,7 +473,12 @@ func to_basic(expression:String):
 	if expression.is_valid_float():
 		return expression.to_float()
 	
-	return
+	if expression == "True":
+		return true
+	elif expression == "False":
+		return false
+	
+	return null
 
 
 func is_valid_var_name(vname: String) -> bool:
@@ -328,12 +507,14 @@ func call_func(fname:String, args:Array) -> void:
 
 func query(qname:String):
 	
-	prints("query_called [%s]" % qname)
+#	prints("query_called [%s]" % qname)
 	
 	match qname:
-		"GD_U", "GD_L", "GD_D", "GD_R":
-			var result = Player.get_dist(qname.lstrip("GD_"))
-			prints("qname : %s" % result)
+		"GD_U", "GD_L", "GD_D", "GD_R", "GD_UL", "GD_LU", "GD_DR", "GD_RD",\
+		"GD_UR", "GD_LD", "GD_DL", "GD_RU":
+			qname = qname.right(3)
+			var result = Player.get_dist(qname)
+			prints("query(%s) : %s" % [qname, result])
 			return result
 		_:
 			pass
@@ -344,16 +525,7 @@ func stv(var_str):
 
 
 func is_operator(a) -> bool:
-	
-	return (a == '+') \
-		|| (a == '-') \
-		|| (a == '/') \
-		|| (a == '*') \
-		|| (a == '>') \
-		|| (a == '<') \
-		|| (a == '==') \
-		|| (a == '>=') \
-		|| (a == '<=') \
+	return operators.has(a)
 
 
 func eval(val1, val2, operator):
@@ -380,6 +552,18 @@ func eval(val1, val2, operator):
 
 		"==":
 			return (val1 == val2)
+		
+		"&" : 
+			return (val1 & val2)
+		
+		"|" :
+			return (val1 | val2)
+		
+		"&&":
+			return (val1 && val2)
+		
+		"||":
+			return (val1 || val2)
 
 
 func _on_Analyze_pressed() -> void:
