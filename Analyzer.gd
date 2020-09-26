@@ -140,10 +140,18 @@ func run_instruction(line_number:int) -> void:
 			else:
 				assert(0)
 		"JI", "JN": # Jump If | Jump Not If
+			var line :String= lines[line_number]
+			var first_space = line.find(" ")
+			line = line.right(first_space + 1)
+			
+			var last_space = line.rfind(" ")
+			var expression = line.left(last_space)
+			var jump_target = line.right(last_space + 1)
+			
+			var evaluation = evaluate_expression(expression)
 			var target_truth_val = (op == "JI")
-			var jump_target = args[2] # [JI] [EXP] [TARGET]
+			
 			if !while_binds.has(jump_target) and jump_table.has(jump_target):
-				var evaluation = evaluate_expression(args[1])
 				if bool(evaluation) == target_truth_val:
 					current_line = jump_table[jump_target]
 				else:
@@ -578,3 +586,7 @@ func _on_Stop_pressed() -> void:
 	get_parent().Game.pause_mode = PAUSE_MODE_STOP
 	processing = false
 #	current_line = 0
+
+
+func _on_Reset_pressed() -> void:
+	_on_Stop_pressed()
