@@ -35,6 +35,10 @@ var keywords = [
 	"JU" ,
 	"JI" ,
 	"JN" ,
+	"CALL",
+	"VAR",
+	"PUT",
+
 	"JUMP" ,
 	"MOVE" ,
 
@@ -58,5 +62,4 @@ var keywords = [
 	"R" ,
 	"D" ,
 	
-	"CALL",
 ]

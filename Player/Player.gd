@@ -7,7 +7,7 @@ var SLOW := 2.0
 
 var MAX_VELOCITY := 100.0
 var SPEED := 60.0
-var jump_strength := 220.0
+var jump_strength := 400.0
 
 var velocity := Vector2.ZERO
 

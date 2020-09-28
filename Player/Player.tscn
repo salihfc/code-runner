@@ -27,6 +27,8 @@ shape = SubResource( 1 )
 [node name="MovementController" type="Node" parent="."]
 script = ExtResource( 3 )
 
+[node name="JumpTimer" type="Timer" parent="MovementController"]
+
 [node name="InputController" type="Node" parent="."]
 script = ExtResource( 4 )
 

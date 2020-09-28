@@ -86,10 +86,12 @@ var query_table = [
 var processing := false
 var current_line_processed := true
 var current_line :int= 1
+var first_cycle := true
 onready var line_timer = $Timer
 
 var _LINE_TIME := 0.1
 var _DELAY_ACTIVE := true
+
 
 func reset() -> void:
 	lines = PoolStringArray([])
@@ -98,40 +100,47 @@ func reset() -> void:
 	processing = false
 	current_line_processed = true
 	current_line = 1
+	first_cycle = true
+
+
+func _ready() -> void:
+	pass
 
 
 func _process(delta: float) -> void:
-	
 	if processing:
 		current_line = 0
 		while current_line < lines.size():
 #			prints(current_line)
 			text_edit.cursor_set_line(current_line)
 			run_instruction(current_line)
+	
+	first_cycle = false
 
 
-#func _process(delta: float) -> void:
-#
-#	if processing and current_line < lines.size():
-#		text_edit.cursor_set_line(current_line)
-#
-#		if current_line_processed and\
-#			((not _DELAY_ACTIVE) or line_timer.time_left < 0.01): 
-#			# go to next line
-#
-#			current_line_processed = false
-##			prints("current line: [%s]" % current_line)
-#			line_timer.start(_LINE_TIME)
-#			run_instruction(current_line)
-#			current_line_processed = true
-#	elif current_line == lines.size():
-#		current_line = 0
+"""
+func _process(delta: float) -> void:
+
+	if processing and current_line < lines.size():
+		text_edit.cursor_set_line(current_line)
+
+		if current_line_processed and
+			((not _DELAY_ACTIVE) or line_timer.time_left < 0.01): 
+			# go to next line
+
+			current_line_processed = false
+#			prints("current line: [%s]" % current_line)
+			line_timer.start(_LINE_TIME)
+			run_instruction(current_line)
+			current_line_processed = true
+	elif current_line == lines.size():
+		current_line = 0
+"""
 
 
 func run_instruction(line_number:int) -> void:
 
 	# check if comment
-	
 	if lines[line_number].begins_with("#"):
 		current_line += 1
 		return
@@ -155,6 +164,7 @@ func run_instruction(line_number:int) -> void:
 				current_line = jump_table[jump_target]
 			else:
 				assert(0)
+
 		"JI", "JN": # Jump If | Jump Not If
 			var line :String= lines[line_number]
 			var first_space = line.find(" ")
@@ -174,6 +184,28 @@ func run_instruction(line_number:int) -> void:
 					current_line += 1
 			else:
 				assert(0)
+		
+		"VAR":
+			if not first_cycle:
+				var target_ref = args[1]
+				var source_ref_or_val 
+				if args.size() == 3:
+					source_ref_or_val = args[2]
+				else:
+					source_ref_or_val = ""
+				
+				if not is_valid_var_name(target_ref):
+					assert(0)
+				
+				if source_ref_or_val != "":
+					if var_table.has(source_ref_or_val):
+						var_table[target_ref] = var_table[source_ref_or_val]
+					elif query_table.has(source_ref_or_val):
+						var_table[target_ref] = query(source_ref_or_val)
+					else:
+						var_table[target_ref] = evaluate_expression(args[2])
+			current_line += 1
+
 		"PUT": # Assignment operation A = 5, A = B, A = B + 5
 			var target_ref = args[1]
 			var source_ref_or_val = args[2]
@@ -183,11 +215,13 @@ func run_instruction(line_number:int) -> void:
 				
 			if var_table.has(source_ref_or_val):
 				var_table[target_ref] = var_table[source_ref_or_val]
+			elif query_table.has(source_ref_or_val):
+				var_table[target_ref] = query(source_ref_or_val)
 			else:
 				var_table[target_ref] = evaluate_expression(args[2])
 			
 			current_line += 1
-			
+
 		"CALL":
 			var func_name = args[1]
 			var func_args = args[2].split(" ")
@@ -214,7 +248,7 @@ func run_instruction(line_number:int) -> void:
 					current_line = (jump_table[jump_target] + 1)
 			else:
 				assert(0)
-				
+
 		"PRINT":
 			var expression = lines[line_number]
 			var first_space = expression.find(" ")
@@ -226,8 +260,8 @@ func run_instruction(line_number:int) -> void:
 			console._print("%s: %s" % [expression, String(eval)])
 
 		_:
-#			prints("Warning: line skipped [%s]" % line_number)
-			evaluate_expression(lines[line_number])
+			prints("Warning: line skipped [%s]" % line_number)
+#			evaluate_expression(lines[line_number])
 			current_line += 1
 	
 
@@ -293,14 +327,15 @@ func prepass() -> void:
 		prints("%s :: %s" % [i, lines[i]])
 		var line = lines[i]
 		if line.begins_with("WHILE"):
-			var args = line.lstrip("WHILE ")
+			var args = strip_arg_left(line)
 			var last_space = args.rfind(" ")
 			var label = args.right(last_space+1)
 			if not jump_table.has(label):
 				assert(0)
 			else:
 				while_binds[label] = i
-
+	
+	prints("PREPASS OK")
 
 func is_keyword(word : String) -> bool:
 	return GLOBAL.keywords.has(word)
@@ -557,6 +592,32 @@ func query(qname:String):
 
 func stv(var_str):
 	return str2var(var_str)
+
+
+"""
+	Strip func tests:
+		
+	var expression = "WHILE (TESTING & ERROR ) ME"
+	prints("strip_arg_left:[%s]" % strip_arg_left(expression))
+	prints("get_arg_left:[%s]" % get_arg_left(expression))
+	prints("strip_arg_right:[%s]" % strip_arg_right(expression))
+	prints("get_arg_right:[%s]" % get_arg_right(expression))
+"""
+
+func strip_arg_left(expression : String) -> String:
+	return expression.right(expression.find(" ") + 1)
+
+
+func strip_arg_right(expression : String) -> String:
+	return expression.substr(0, expression.rfind(" "))
+
+
+func get_arg_left(expression : String) -> String:
+	return expression.substr(0, expression.find(" "))
+
+
+func get_arg_right(expression : String) -> String:
+	return expression.right(expression.rfind(" ") + 1)
 
 
 func is_operator(a) -> bool:

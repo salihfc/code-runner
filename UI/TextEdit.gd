@@ -7,9 +7,12 @@ var keywords = {
 	"CALL" : Color.orange,
 	"WHILE" : Color.orange,
 	"PRINT" : Color.orange,
+	"PUT" : Color.orange,
+	"VAR" : Color.orange,
 	
-	"JUMP" : Color.blueviolet,
-	"MOVE" : Color.blueviolet,
+	"JUMP" : Color.darkcyan,
+	"MOVE" : Color.darkcyan,
+	
 	"GD_U" : Color.blueviolet,
 	"GD_UL" : Color.blueviolet,
 	"GD_UR" : Color.blueviolet,

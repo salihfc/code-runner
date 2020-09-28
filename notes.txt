@@ -1,9 +1,12 @@
 
 Logical:
-	While() | Until()?? Maybe use goto instead
-	goto requires comprehensive ifs to feel good
-
+	[+] WHILE
 	[+]	JI // jump if true | JI (expression)
+	[+] JN
+	[+] JU
+	[+] PRINT
+	[+] PUT
+	[+] VAR
 
 	[+] expression evaluation:
 		[+] recursive eval from right
@@ -42,3 +45,7 @@ jump when you hit a wall
 
 Expression parsing:
 (GD_R>9)*(GD_DR<9)
+
+TO_DO:
+	add VAR
+	make PRINT work with queries and variables

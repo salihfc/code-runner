@@ -16,7 +16,9 @@ func _process(delta: float) -> void:
 	
 	if Input.is_action_just_pressed("run"):
 		$Analyzer._on_Analyze_pressed()
-
+	
+	if Input.is_action_just_pressed("save_code"):
+		save_text_edit()
 
 func _on_exit() -> void:
 	get_tree().quit()
@@ -33,4 +35,8 @@ func _on_SaveTimer_timeout() -> void:
 
 
 func _on_Main_tree_exiting() -> void:
+	save_text_edit()
+
+
+func _on_Save_pressed() -> void:
 	save_text_edit()

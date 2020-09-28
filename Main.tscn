@@ -59,6 +59,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Save" type="Button" parent="UI/Buttons"]
+margin_top = 120.0
+margin_right = 80.0
+margin_bottom = 140.0
+text = "Save"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="TextEdit" type="TextEdit" parent="UI"]
 margin_left = 74.0
 margin_top = 42.0
@@ -142,6 +151,7 @@ pause_mode = 1
 [connection signal="pressed" from="UI/Buttons/Analyze" to="Analyzer" method="_on_Analyze_pressed"]
 [connection signal="pressed" from="UI/Buttons/Stop" to="Analyzer" method="_on_Stop_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="UI/TextEdit" method="_on_Reset_pressed"]
-[connection signal="pressed" from="UI/Buttons/Reset" to="ViewportContainer/Viewport/Game" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="Analyzer" method="_on_Reset_pressed"]
+[connection signal="pressed" from="UI/Buttons/Reset" to="ViewportContainer/Viewport/Game" method="_on_Reset_pressed"]
+[connection signal="pressed" from="UI/Buttons/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="UI/Clear" to="UI/Panel/Output" method="_on_Clear_pressed"]
