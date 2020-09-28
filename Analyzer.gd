@@ -2,7 +2,7 @@ extends Node
 
 onready var main = get_parent()
 onready var text_edit = get_parent().get_node("UI/TextEdit")
-onready var output = get_parent().get_node("UI/Panel/Output")
+onready var console = get_parent().get_node("UI/Panel/Output")
 onready var Player = get_parent().get_node("PlayerController")
 onready var evaluator = $Evaluator
 
@@ -102,23 +102,39 @@ func reset() -> void:
 
 func _process(delta: float) -> void:
 	
-	if processing and current_line < lines.size():
-		text_edit.cursor_set_line(current_line)
-		
-		if current_line_processed and\
-			((not _DELAY_ACTIVE) or line_timer.time_left < 0.01): 
-			# go to next line
-			
-			current_line_processed = false
-#			prints("current line: [%s]" % current_line)
-			line_timer.start(_LINE_TIME)
+	if processing:
+		current_line = 0
+		while current_line < lines.size():
+#			prints(current_line)
+			text_edit.cursor_set_line(current_line)
 			run_instruction(current_line)
-			current_line_processed = true
+
+
+#func _process(delta: float) -> void:
+#
+#	if processing and current_line < lines.size():
+#		text_edit.cursor_set_line(current_line)
+#
+#		if current_line_processed and\
+#			((not _DELAY_ACTIVE) or line_timer.time_left < 0.01): 
+#			# go to next line
+#
+#			current_line_processed = false
+##			prints("current line: [%s]" % current_line)
+#			line_timer.start(_LINE_TIME)
+#			run_instruction(current_line)
+#			current_line_processed = true
 #	elif current_line == lines.size():
 #		current_line = 0
 
 
 func run_instruction(line_number:int) -> void:
+
+	# check if comment
+	
+	if lines[line_number].begins_with("#"):
+		current_line += 1
+		return
 
 	# line is flag -> skip
 	if flag_lines.has(line_number):
@@ -179,15 +195,17 @@ func run_instruction(line_number:int) -> void:
 			current_line += 1
 
 		"WHILE": # WHILE EXPRESSION LABEL
-			var jump_target = args[2] # [JI] [EXP] [TARGET]
-			var expression = lines[line_number].lstrip("WHILE ")
-			var last_space = expression.rfind(" ")
+			var line :String= lines[line_number]
+			var first_space = line.find(" ")
+			line = line.right(first_space + 1)
 			
-			jump_target = expression.right(last_space + 1)
-			expression = expression.left(last_space)
+			var last_space = line.rfind(" ")
+			var expression = line.left(last_space)
+			var jump_target = line.right(last_space + 1)
+			
 			var evaluation = evaluate_expression(expression)
 			
-			prints("WHILE eval=> %s = %s" % [expression, evaluation])
+#			prints("WHILE eval=> %s = %s" % [expression, evaluation])
 			
 			if while_binds.has(jump_target):
 				if bool(evaluation):
@@ -197,11 +215,20 @@ func run_instruction(line_number:int) -> void:
 			else:
 				assert(0)
 				
+		"PRINT":
+			var expression = lines[line_number]
+			var first_space = expression.find(" ")
+			expression = expression.right(first_space + 1)
+			
+			var eval = evaluate_expression(expression)
+			current_line += 1
+#			console._print(String(eval))
+			console._print("%s: %s" % [expression, String(eval)])
+
 		_:
 #			prints("Warning: line skipped [%s]" % line_number)
 			evaluate_expression(lines[line_number])
 			current_line += 1
-			pass
 	
 
 
@@ -220,7 +247,7 @@ func analyze() -> void:
 	print_jump_table()
 	output_text = lines.join("\n")
 #	prints("analyze : %s -> %s" % [input_text, output_text])
-	emit_signal("new_analysis", output_text)
+#	emit_signal("new_analysis", output_text)
 
 
 
@@ -309,6 +336,9 @@ func evaluate_expression(expression : String):
 	
 	expression = expression.split(" ").join("")
 	
+	if expression == "":
+		return ""
+	
 	# replace '(a)' with eval(a)
 	var cur :int = 0
 	
@@ -349,7 +379,7 @@ func evaluate_expression(expression : String):
 
 	if query_table.has(expression):
 		var result = query(expression)
-		prints("query %s result: %s" % [expression, result])
+#		prints("query %s result: %s" % [expression, result])
 		return result
 
 
@@ -519,7 +549,7 @@ func query(qname:String):
 		"GD_UR", "GD_LD", "GD_DL", "GD_RU":
 			qname = qname.right(3)
 			var result = Player.get_dist(qname)
-			prints("query(%s) : %s" % [qname, result])
+#			prints("query(%s) : %s" % [qname, result])
 			return result
 		_:
 			pass

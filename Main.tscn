@@ -64,15 +64,8 @@ margin_left = 74.0
 margin_top = 42.0
 margin_right = 305.0
 margin_bottom = 462.0
-text = "PUT jumped 0
-START
-WHILE (GD_R>9) && (GD_DR < 9) || ((GD_DR > 10) && (jumped==1)) WRAP
-CALL MOVE R
-PUT jumped 0
-WRAP
-CALL JUMP 1
-PUT jumped 1
-JU START"
+text = "EXAMPLE CODE
+"
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
@@ -98,6 +91,16 @@ __meta__ = {
 margin_right = 1131.0
 margin_bottom = 185.0
 script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Clear" type="Button" parent="UI"]
+margin_left = 1212.84
+margin_top = 495.0
+margin_right = 1272.84
+margin_bottom = 525.0
+text = "Clear"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -141,3 +144,4 @@ pause_mode = 1
 [connection signal="pressed" from="UI/Buttons/Reset" to="UI/TextEdit" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="ViewportContainer/Viewport/Game" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="Analyzer" method="_on_Reset_pressed"]
+[connection signal="pressed" from="UI/Clear" to="UI/Panel/Output" method="_on_Clear_pressed"]

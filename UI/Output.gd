@@ -9,3 +9,10 @@ func _ready() -> void:
 
 func _analysis_update(new_text) -> void:
 	text = new_text
+
+func _print(new_text : String) -> void:
+	text = text + "\n" + new_text
+
+
+func _on_Clear_pressed() -> void:
+	text = ""

@@ -6,6 +6,7 @@ var keywords = {
 	"JN" : Color.orange,
 	"CALL" : Color.orange,
 	"WHILE" : Color.orange,
+	"PRINT" : Color.orange,
 	
 	"JUMP" : Color.blueviolet,
 	"MOVE" : Color.blueviolet,
