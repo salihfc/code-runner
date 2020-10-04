@@ -51,16 +51,13 @@ func _physics_process(delta: float) -> void:
 	velocity.x = 0
 
 
-
 func _is_on_floor() -> bool:
 #	prints("distance to floor: [%s] <=? [%s]"\
 # % [get_dist(GLOBAL.DIRECTION.DOWN), $Sprite.get_rect().size.x / 2 + 0.01])
-	return (get_dist(GLOBAL.DIRECTION.DOWN) <= 0.0)
+
+#	LOG.pr(2, "is_on_floor:%s"%(get_dist(GLOBAL.DIRECTION.DOWN) <= 0.01), "Player::_is_on_floor")
+	return (get_dist(GLOBAL.DIRECTION.DOWN) <= 0.01)
 #	 or queue.is_same()
-	
-
-
-
 
 
 

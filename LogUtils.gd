@@ -14,7 +14,7 @@ const msg_type = ["ALL  ", "TRACE", "DEBUG", "WARNING"]
 func pr(level: int, log_msg, caller:String) -> void:
 	if level < LEVEL: return
 
-	var msg = str(log_msg) + "[%s]"%caller
+	var msg = str(log_msg) + " -- [%s]"%caller
 	msg = msg_type[level] + " -- " + msg
 	print(msg)
 

@@ -21,8 +21,10 @@ func jump(multiplier) -> void:
 	LOG.pr(0, "jump command [%s]" % player._is_on_floor(),\
 	"MovementController::jump")
 	
+#	LOG.pr(2, "JUMP called {on_floor:%s | can_jump:%s}" % [player._is_on_floor(), can_jump], "MovementController::jump")
+
 	if player._is_on_floor() and can_jump:
-		LOG.pr(0, "JUMP %s" % ct, "MovementController::jump")
+#		LOG.pr(2, "JUMP %s" % ct, "MovementController::jump")
 		ct += 1
 		player.velocity += Vector2.UP * player.jump_strength * multiplier
 		can_jump = false
