@@ -4,12 +4,10 @@
 [ext_resource path="res://assets/blue_16x16.png" type="Texture" id=2]
 [ext_resource path="res://Player/MovementController.gd" type="Script" id=3]
 [ext_resource path="res://Player/InputController.gd" type="Script" id=4]
+[ext_resource path="res://Player/PositionQueue.gd" type="Script" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 8, 8 )
-
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 7.98408, 1.23044 )
 
 [node name="Player" type="KinematicBody2D"]
 collision_layer = 32
@@ -32,81 +30,87 @@ script = ExtResource( 3 )
 [node name="InputController" type="Node" parent="."]
 script = ExtResource( 4 )
 
-[node name="Down" type="Area2D" parent="."]
-collision_layer = 32
+[node name="PositionQueue" type="Node" parent="."]
+script = ExtResource( 5 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Down"]
-position = Vector2( 0, 8 )
-shape = SubResource( 2 )
+[node name="Rays" type="Node2D" parent="."]
 
-[node name="RayDown" type="RayCast2D" parent="."]
+[node name="RayDown" type="RayCast2D" parent="Rays"]
 position = Vector2( 0, 8 )
 enabled = true
 cast_to = Vector2( 0, 100 )
 collide_with_areas = true
 
-[node name="RayDownL" type="RayCast2D" parent="."]
+[node name="RayDownL" type="RayCast2D" parent="Rays"]
 position = Vector2( -7.01466, 8 )
 enabled = true
 cast_to = Vector2( 0, 100 )
 collide_with_areas = true
 
-[node name="RayDownR" type="RayCast2D" parent="."]
+[node name="RayDownR" type="RayCast2D" parent="Rays"]
 position = Vector2( 6.95814, 8 )
 enabled = true
 cast_to = Vector2( 0, 100 )
 collide_with_areas = true
 
-[node name="RayRight" type="RayCast2D" parent="."]
+[node name="RayRight" type="RayCast2D" parent="Rays"]
 position = Vector2( 8, 0 )
 enabled = true
 cast_to = Vector2( 100, 0 )
 collide_with_areas = true
 
-[node name="RayRightD" type="RayCast2D" parent="."]
+[node name="RayRightD" type="RayCast2D" parent="Rays"]
 position = Vector2( 8, 6.93934 )
 enabled = true
 cast_to = Vector2( 100, 0 )
 collide_with_areas = true
 
-[node name="RayRightU" type="RayCast2D" parent="."]
+[node name="RayRightU" type="RayCast2D" parent="Rays"]
 position = Vector2( 8, -6.93763 )
 enabled = true
 cast_to = Vector2( 100, 0 )
 collide_with_areas = true
 
-[node name="RayUp" type="RayCast2D" parent="."]
+[node name="RayUp" type="RayCast2D" parent="Rays"]
 position = Vector2( 0, -8 )
 enabled = true
 cast_to = Vector2( 0, -100 )
 collide_with_areas = true
 
-[node name="RayUpR" type="RayCast2D" parent="."]
+[node name="RayUpR" type="RayCast2D" parent="Rays"]
 position = Vector2( 6.95814, -8 )
 enabled = true
 cast_to = Vector2( 0, -100 )
 collide_with_areas = true
 
-[node name="RayUpL" type="RayCast2D" parent="."]
+[node name="RayUpL" type="RayCast2D" parent="Rays"]
 position = Vector2( -7.01466, -8 )
 enabled = true
 cast_to = Vector2( 0, -100 )
 collide_with_areas = true
 
-[node name="RayLeft" type="RayCast2D" parent="."]
+[node name="RayLeft" type="RayCast2D" parent="Rays"]
 position = Vector2( -8, 0 )
 enabled = true
 cast_to = Vector2( -100, 0 )
 collide_with_areas = true
 
-[node name="RayLeftU" type="RayCast2D" parent="."]
+[node name="RayLeftU" type="RayCast2D" parent="Rays"]
 position = Vector2( -8, -6.93763 )
 enabled = true
 cast_to = Vector2( -100, 0 )
 collide_with_areas = true
 
-[node name="RayLeftD" type="RayCast2D" parent="."]
+[node name="RayLeftD" type="RayCast2D" parent="Rays"]
 position = Vector2( -8, 6.93934 )
 enabled = true
 cast_to = Vector2( -100, 0 )
 collide_with_areas = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+drag_margin_h_enabled = true
+drag_margin_v_enabled = true
+smoothing_enabled = true
+smoothing_speed = 30.0
+[connection signal="timeout" from="MovementController/JumpTimer" to="MovementController" method="_on_JumpTimer_timeout"]

@@ -38,6 +38,8 @@ var keywords = [
 	"CALL",
 	"VAR",
 	"PUT",
+	"CONTINUE",
+	"WHILE",
 
 	"JUMP" ,
 	"MOVE" ,

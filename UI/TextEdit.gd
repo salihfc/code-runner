@@ -9,9 +9,12 @@ var keywords = {
 	"PRINT" : Color.orange,
 	"PUT" : Color.orange,
 	"VAR" : Color.orange,
+	"CONTINUE" : Color.orange,
 	
 	"JUMP" : Color.darkcyan,
 	"MOVE" : Color.darkcyan,
+	"STOP" : Color.darkcyan,
+	"THROW" : Color.darkcyan,
 	
 	"GD_U" : Color.blueviolet,
 	"GD_UL" : Color.blueviolet,
@@ -25,6 +28,7 @@ var keywords = {
 	"GD_D" : Color.blueviolet,
 	"GD_DL" : Color.blueviolet,
 	"GD_DR" : Color.blueviolet,
+	"ON_FLOOR" : Color.blueviolet,
 	
 	"U" : Color.blanchedalmond,
 	"L" : Color.blanchedalmond,

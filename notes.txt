@@ -47,5 +47,27 @@ Expression parsing:
 (GD_R>9)*(GD_DR<9)
 
 TO_DO:
-	add VAR
-	make PRINT work with queries and variables
+	[+] add VAR
+	[+] make PRINT work with queries and variables
+	[+] CALL STOP
+
+
+
+
+
+VAR F1 0
+VAR STOPPED 0
+JI STOPPED STOPPING
+JI GD_R < 1 SKIP
+JI (GD_DR > 4) && (GD_D < 1) STOPPING
+CALL MOVE R
+PUT F1 (F1+1)
+JU DONT_JUMP
+SKIP
+CALL JUMP 1
+DONT_JUMP
+JU END
+STOPPING
+PUT STOPPED 1
+CALL STOP
+END

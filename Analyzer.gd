@@ -4,7 +4,6 @@ onready var main = get_parent()
 onready var text_edit = get_parent().get_node("UI/TextEdit")
 onready var console = get_parent().get_node("UI/Panel/Output")
 onready var Player = get_parent().get_node("PlayerController")
-onready var evaluator = $Evaluator
 
 signal new_analysis(text)
 
@@ -81,6 +80,8 @@ var query_table = [
 
 	"GD_RU",
 	"GD_RD",
+	
+	"ON_FLOOR",
 ]
 
 var processing := false
@@ -111,39 +112,20 @@ func _process(delta: float) -> void:
 	if processing:
 		current_line = 0
 		while current_line < lines.size():
-#			prints(current_line)
 			text_edit.cursor_set_line(current_line)
-			run_instruction(current_line)
-	
+			if not run_instruction(current_line):
+				break
+
 	first_cycle = false
 
 
-"""
-func _process(delta: float) -> void:
-
-	if processing and current_line < lines.size():
-		text_edit.cursor_set_line(current_line)
-
-		if current_line_processed and
-			((not _DELAY_ACTIVE) or line_timer.time_left < 0.01): 
-			# go to next line
-
-			current_line_processed = false
-#			prints("current line: [%s]" % current_line)
-			line_timer.start(_LINE_TIME)
-			run_instruction(current_line)
-			current_line_processed = true
-	elif current_line == lines.size():
-		current_line = 0
-"""
-
-
-func run_instruction(line_number:int) -> void:
+func run_instruction(line_number:int) -> bool:
+	LOG.pr(2, "LINE: %s" % line_number, "Analyzer::run_instruction")
 
 	# check if comment
 	if lines[line_number].begins_with("#"):
 		current_line += 1
-		return
+		return true
 
 	# line is flag -> skip
 	if flag_lines.has(line_number):
@@ -151,31 +133,30 @@ func run_instruction(line_number:int) -> void:
 			current_line = while_binds[lines[line_number]]
 		else:
 			current_line += 1
-		return
+		return true
 
 	# instruction argument count assumed to be maximum 3
-	var args = lines[line_number].split(" ", 3)
-	var op = args[0]
+	var line = lines[line_number]
+	var op = get_arg_left(line)
+	line = strip_arg_left(line)
 	
 	match op:
 		"JU": # Jump Unconditionally [JU] [TARGET:FLAG]
-			var jump_target = args[1]
+			var jump_target = get_arg_left(line)
 			if !while_binds.has(jump_target) and jump_table.has(jump_target):
 				current_line = jump_table[jump_target]
 			else:
+				LOG.pr(2, "JUMP target [%s] cannot found" % jump_target, "Analyzer::run_instructions")
 				assert(0)
 
 		"JI", "JN": # Jump If | Jump Not If
-			var line :String= lines[line_number]
-			var first_space = line.find(" ")
-			line = line.right(first_space + 1)
-			
-			var last_space = line.rfind(" ")
-			var expression = line.left(last_space)
-			var jump_target = line.right(last_space + 1)
+			var expression = strip_arg_right(line)
+			var jump_target = get_arg_right(line)
 			
 			var evaluation = evaluate_expression(expression)
 			var target_truth_val = (op == "JI")
+			
+#			console._print("[%s] {%s} = {%s}" % [line_number, expression, evaluation])
 			
 			if !while_binds.has(jump_target) and jump_table.has(jump_target):
 				if bool(evaluation) == target_truth_val:
@@ -183,63 +164,59 @@ func run_instruction(line_number:int) -> void:
 				else:
 					current_line += 1
 			else:
+				LOG.pr(2, "jump target cannot found", "Analyzer::run_instructions")
 				assert(0)
 		
 		"VAR":
-			if not first_cycle:
-				var target_ref = args[1]
-				var source_ref_or_val 
-				if args.size() == 3:
-					source_ref_or_val = args[2]
-				else:
-					source_ref_or_val = ""
+			if first_cycle:
+				var target_ref = get_arg_left(line)
+				var rvalue = strip_arg_left(line)
+				
+				if rvalue == "":
+					rvalue = 0
 				
 				if not is_valid_var_name(target_ref):
 					assert(0)
 				
-				if source_ref_or_val != "":
-					if var_table.has(source_ref_or_val):
-						var_table[target_ref] = var_table[source_ref_or_val]
-					elif query_table.has(source_ref_or_val):
-						var_table[target_ref] = query(source_ref_or_val)
+				if rvalue != "":
+					if var_table.has(rvalue):
+						var_table[target_ref] = var_table[rvalue]
+					elif query_table.has(rvalue):
+						var_table[target_ref] = query(rvalue)
 					else:
-						var_table[target_ref] = evaluate_expression(args[2])
+						var_table[target_ref] = evaluate_expression(rvalue)
 			current_line += 1
 
 		"PUT": # Assignment operation A = 5, A = B, A = B + 5
-			var target_ref = args[1]
-			var source_ref_or_val = args[2]
+			var target_ref = get_arg_left(line)
+			var rvalue = strip_arg_left(line)
+			if rvalue == "":
+				rvalue = 0
 			
 			if not is_valid_var_name(target_ref):
+				LOG.pr(2, "IDENTIFIER name is not valid [%s]" % target_ref, "Analyzer::run_instructions")
 				assert(0)
 				
-			if var_table.has(source_ref_or_val):
-				var_table[target_ref] = var_table[source_ref_or_val]
-			elif query_table.has(source_ref_or_val):
-				var_table[target_ref] = query(source_ref_or_val)
+			if var_table.has(rvalue):
+				var_table[target_ref] = var_table[rvalue]
+			elif query_table.has(rvalue):
+				var_table[target_ref] = query(rvalue)
 			else:
-				var_table[target_ref] = evaluate_expression(args[2])
+				var_table[target_ref] = evaluate_expression(rvalue)
 			
 			current_line += 1
 
 		"CALL":
-			var func_name = args[1]
-			var func_args = args[2].split(" ")
+			var func_name = get_arg_left(line)
+			var func_args = strip_arg_left(line).split(" ")
+			# console._print("Calling [%s]:[%s]" % [func_name, func_args])
 			call_func(func_name, func_args)
 			current_line += 1
 
 		"WHILE": # WHILE EXPRESSION LABEL
-			var line :String= lines[line_number]
-			var first_space = line.find(" ")
-			line = line.right(first_space + 1)
-			
-			var last_space = line.rfind(" ")
-			var expression = line.left(last_space)
-			var jump_target = line.right(last_space + 1)
-			
+			var jump_target = get_arg_right(line)
+			var expression = strip_arg_right(line)
 			var evaluation = evaluate_expression(expression)
-			
-#			prints("WHILE eval=> %s = %s" % [expression, evaluation])
 			
 			if while_binds.has(jump_target):
 				if bool(evaluation):
@@ -247,24 +224,33 @@ func run_instruction(line_number:int) -> void:
 				else:
 					current_line = (jump_table[jump_target] + 1)
 			else:
+				LOG.pr(2, "WHILE BIND CANNOT FOUND: [%s]" % jump_target, "Analyzer::run_instruction")
 				assert(0)
 
+		"CONTINUE":
+			# go to next step
+			LOG.pr(1, "Continue", "Analyzer::run_instruction")
+			return false
+
 		"PRINT":
-			var expression = lines[line_number]
-			var first_space = expression.find(" ")
-			expression = expression.right(first_space + 1)
+			var items = line.split(" ")
+			var result := ""
 			
-			var eval = evaluate_expression(expression)
+			for item in items:
+				var eval = evaluate_expression(item)
+				result += "%s:%s ||" % [item, eval]
+			
 			current_line += 1
-#			console._print(String(eval))
-			console._print("%s: %s" % [expression, String(eval)])
+			console._print(result)
+#			console._print("%s: %s" % [line, String(eval)])
 
 		_:
-			prints("Warning: line skipped [%s]" % line_number)
+			LOG.pr(2, "Warning: line skipped [%s]" % line_number, "Analyzer::run_instruction")
 #			evaluate_expression(lines[line_number])
 			current_line += 1
 	
-
+	# continue execution of lines
+	return true
 
 """
 	analyze:
@@ -304,7 +290,7 @@ func prepass() -> void:
 	var line_count = lines.size()
 	
 	for i in line_count:
-		prints("%s :: %s" % [i, lines[i]])
+		LOG.pr(0, "%s :: %s" % [i, lines[i]], "Analyzer::prepass")
 		var line = lines[i]
 		var args = line.split(" ")
 		
@@ -314,8 +300,8 @@ func prepass() -> void:
 			else:
 				if jump_table.has(args[0]):
 					# return syntax error
-					prints("duplicate jump_flags at [%s, %s] Flag:{%s}" %\
-					[i, jump_table[args[0]], args[0]])
+					LOG.pr(2, "duplicate jump_flags at [%s, %s] Flag:{%s}" %\
+					[i, jump_table[args[0]], args[0]], "Analyzer::prepass")
 					assert(0)
 				else:
 					jump_table[args[0]] = i
@@ -324,7 +310,7 @@ func prepass() -> void:
 					flag_lines.append(i)
 	
 	for i in line_count:
-		prints("%s :: %s" % [i, lines[i]])
+		LOG.pr(2, "%s :: %s" % [i, lines[i]], "Analyzer::prepass")
 		var line = lines[i]
 		if line.begins_with("WHILE"):
 			var args = strip_arg_left(line)
@@ -335,7 +321,8 @@ func prepass() -> void:
 			else:
 				while_binds[label] = i
 	
-	prints("PREPASS OK")
+	LOG.pr(1, "PREPASS OK", "Analyzer::prepass")
+
 
 func is_keyword(word : String) -> bool:
 	return GLOBAL.keywords.has(word)
@@ -368,23 +355,27 @@ func match_paranthesis(expression, it :int) -> int:
 	
 
 func evaluate_expression(expression : String):
-	
+	# get rid of spaces
 	expression = expression.split(" ").join("")
 	
 	if expression == "":
 		return ""
 	
-	# replace '(a)' with eval(a)
+	# replace '(a)' with eval(a) {get rid of paranthesis, recursively}
 	var cur :int = 0
 	
 	while cur < expression.length():
+		# first opening paranthesis
 		var it = expression.find("(", cur)
 		
 		if it != -1:
 			var end = match_paranthesis(expression, it)
 			
 			if end != -1:
+				# inside paranthesis
 				var par_exp = expression.substr(it + 1, end - it - 1)
+
+				# evaluate inside
 				var result = String(evaluate_expression(par_exp))
 				
 				expression = expression.substr(0, it) + result\
@@ -392,7 +383,8 @@ func evaluate_expression(expression : String):
 				cur = it + result.length()
 
 			else:
-				prints("unmatched paranthesis from idx[%s]" % it)
+				LOG.err("unmatched paranthesis from idx[%s]" % it,\
+				"Analyzer::evaluate_expression")
 				assert(0)
 		else:
 			break
@@ -432,6 +424,7 @@ func evaluate_expression(expression : String):
 			"+", "-", "/", "*":
 				it = cur
 				op = expression[cur]
+				cur += 1
 
 			"&", "|":
 				var tmp = expression[cur]
@@ -471,6 +464,7 @@ func evaluate_expression(expression : String):
 
 	## --------------------------------------------------
 
+	# evaluate left and right of the operator
 	var exp1 = expression.substr(0, it)
 	var exp2 = expression.substr(it + op.length(), -1)
 
@@ -516,7 +510,8 @@ func replace_symbols(expression : String) -> String:
 			break
 		
 		else:
-			prints("identifier cannot found [%s]" % identifier_name)
+			
+			LOG.err("identifier cannot found [%s]" % identifier_name, "Analyzer::replace_symbols")
 			assert(0)
 
 		it = last_letter
@@ -568,6 +563,9 @@ func call_func(fname:String, args:Array) -> void:
 		"JUMP":
 			Player.jump(to_basic(args[0]))
 		
+		"STOP":
+			Player.stop()
+		
 		"THROW":
 			if args.size() == 1:
 				Player.throw_to_angle(float(args[0]))
@@ -586,6 +584,8 @@ func query(qname:String):
 			var result = Player.get_dist(qname)
 #			prints("query(%s) : %s" % [qname, result])
 			return result
+		"ON_FLOOR":
+			return Player.on_floor()
 		_:
 			pass
 

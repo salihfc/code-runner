@@ -7,7 +7,7 @@ func move(side) -> void:
 	elif side == "R":
 		GLOBAL.Player.movement.move(Vector2.RIGHT)
 	else:
-		prints("wrong input PlayerController::move")
+		LOG.err("wrong input", "PlayerController::move")
 		assert(0)
 
 
@@ -18,6 +18,9 @@ func jump(multiplier) -> void:
 func throw(direction:Vector2) -> void:
 	pass
 
+
+func stop() -> void:
+	GLOBAL.Player.movement.stop()
 
 func get_dist(direction_string) -> float:
 	
@@ -30,3 +33,7 @@ func get_dist(direction_string) -> float:
 		return GLOBAL.Player.get_dist2(direction, side)
 	
 	return INF
+
+
+func on_floor() -> bool:
+	return GLOBAL.Player._is_on_floor()

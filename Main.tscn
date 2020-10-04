@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Analyzer.gd" type="Script" id=2]
@@ -6,6 +6,26 @@
 [ext_resource path="res://UI/TextEdit.gd" type="Script" id=4]
 [ext_resource path="res://Player/PlayerController.gd" type="Script" id=5]
 [ext_resource path="res://Game.tscn" type="PackedScene" id=6]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Label
+
+onready var timer = $Timer
+
+const update_frequency := 0.3
+
+func _ready() -> void:
+	timer.start(update_frequency)
+
+
+func _process(delta: float) -> void:
+	if timer.is_stopped():
+		timer.start(update_frequency)
+
+
+func _on_Timer_timeout() -> void:
+	text = String(Performance.get_monitor(Performance.TIME_FPS))
+"
 
 [node name="Main" type="Node2D"]
 pause_mode = 2
@@ -99,6 +119,7 @@ __meta__ = {
 [node name="Output" type="RichTextLabel" parent="UI/Panel"]
 margin_right = 1131.0
 margin_bottom = 185.0
+scroll_following = true
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -114,12 +135,22 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="FPS" type="Label" parent="UI"]
+margin_left = 452.0
+margin_top = 17.0
+margin_right = 512.0
+margin_bottom = 37.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Timer" type="Timer" parent="UI/FPS"]
+
 [node name="Analyzer" type="Node" parent="."]
 script = ExtResource( 2 )
 
 [node name="Timer" type="Timer" parent="Analyzer"]
-
-[node name="Evaluator" type="Node" parent="Analyzer"]
 
 [node name="PlayerController" type="Node" parent="."]
 script = ExtResource( 5 )
@@ -151,7 +182,8 @@ pause_mode = 1
 [connection signal="pressed" from="UI/Buttons/Analyze" to="Analyzer" method="_on_Analyze_pressed"]
 [connection signal="pressed" from="UI/Buttons/Stop" to="Analyzer" method="_on_Stop_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="UI/TextEdit" method="_on_Reset_pressed"]
-[connection signal="pressed" from="UI/Buttons/Reset" to="Analyzer" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="ViewportContainer/Viewport/Game" method="_on_Reset_pressed"]
+[connection signal="pressed" from="UI/Buttons/Reset" to="Analyzer" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="UI/Clear" to="UI/Panel/Output" method="_on_Clear_pressed"]
+[connection signal="timeout" from="UI/FPS/Timer" to="UI/FPS" method="_on_Timer_timeout"]
