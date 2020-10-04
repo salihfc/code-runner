@@ -3,7 +3,7 @@ extends Node
 var q = []
 
 var SIZE :int= 10
-var THRESHOLD :float= 0.001 
+var THRESHOLD :float= 0.0001 
 
 func push(f : float):
 	q.push_back(f)

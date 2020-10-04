@@ -82,6 +82,7 @@ var query_table = [
 	"GD_RD",
 	
 	"ON_FLOOR",
+	"POS",
 ]
 
 var processing := false
@@ -108,7 +109,8 @@ func _ready() -> void:
 	pass
 
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+#func _process(delta: float) -> void:
 	if processing:
 		current_line = 0
 		while current_line < lines.size():
@@ -120,7 +122,7 @@ func _process(delta: float) -> void:
 
 
 func run_instruction(line_number:int) -> bool:
-	LOG.pr(2, "LINE: %s" % line_number, "Analyzer::run_instruction")
+#	LOG.pr(2, "LINE: %s" % line_number, "Analyzer::run_instruction")
 
 	# check if comment
 	if lines[line_number].begins_with("#"):
@@ -146,7 +148,8 @@ func run_instruction(line_number:int) -> bool:
 			if !while_binds.has(jump_target) and jump_table.has(jump_target):
 				current_line = jump_table[jump_target]
 			else:
-				LOG.pr(2, "JUMP target [%s] cannot found" % jump_target, "Analyzer::run_instructions")
+				LOG.pr(2, "JUMP target [%s] cannot found" % jump_target,\
+				"Analyzer::run_instructions")
 				assert(0)
 
 		"JI", "JN": # Jump If | Jump Not If
@@ -156,15 +159,14 @@ func run_instruction(line_number:int) -> bool:
 			var evaluation = evaluate_expression(expression)
 			var target_truth_val = (op == "JI")
 			
-#			console._print("[%s] {%s} = {%s}" % [line_number, expression, evaluation])
-			
 			if !while_binds.has(jump_target) and jump_table.has(jump_target):
 				if bool(evaluation) == target_truth_val:
 					current_line = jump_table[jump_target]
 				else:
 					current_line += 1
 			else:
-				LOG.pr(2, "jump target cannot found", "Analyzer::run_instructions")
+				LOG.pr(2, "jump target cannot found",\
+				"Analyzer::run_instructions")
 				assert(0)
 		
 		"VAR":
@@ -181,10 +183,16 @@ func run_instruction(line_number:int) -> bool:
 				if rvalue != "":
 					if var_table.has(rvalue):
 						var_table[target_ref] = var_table[rvalue]
+
 					elif query_table.has(rvalue):
 						var_table[target_ref] = query(rvalue)
 					else:
-						var_table[target_ref] = evaluate_expression(rvalue)
+						var_table[target_ref] =\
+						evaluate_expression(rvalue)
+				LOG.pr(1, "%s init as %s"\
+				% [target_ref, var_table[target_ref]],\
+				"Analyzer::run_instruction::match::op")
+			
 			current_line += 1
 
 		"PUT": # Assignment operation A = 5, A = B, A = B + 5
@@ -194,7 +202,8 @@ func run_instruction(line_number:int) -> bool:
 				rvalue = 0
 			
 			if not is_valid_var_name(target_ref):
-				LOG.pr(2, "IDENTIFIER name is not valid [%s]" % target_ref, "Analyzer::run_instructions")
+				LOG.pr(2, "IDENTIFIER name is not valid [%s]" % target_ref,\
+				"Analyzer::run_instructions")
 				assert(0)
 				
 			if var_table.has(rvalue):
@@ -224,12 +233,13 @@ func run_instruction(line_number:int) -> bool:
 				else:
 					current_line = (jump_table[jump_target] + 1)
 			else:
-				LOG.pr(2, "WHILE BIND CANNOT FOUND: [%s]" % jump_target, "Analyzer::run_instruction")
+				LOG.pr(2, "WHILE BIND CANNOT FOUND: [%s]" % jump_target,\
+				"Analyzer::run_instruction")
 				assert(0)
 
 		"CONTINUE":
 			# go to next step
-			LOG.pr(1, "Continue", "Analyzer::run_instruction")
+#			LOG.pr(1, "Continue", "Analyzer::run_instruction")
 			return false
 
 		"PRINT":
@@ -245,7 +255,8 @@ func run_instruction(line_number:int) -> bool:
 #			console._print("%s: %s" % [line, String(eval)])
 
 		_:
-			LOG.pr(2, "Warning: line skipped [%s]" % line_number, "Analyzer::run_instruction")
+			LOG.pr(2, "Warning: line skipped [%s]" % line_number,\
+			"Analyzer::run_instruction")
 #			evaluate_expression(lines[line_number])
 			current_line += 1
 	
@@ -460,6 +471,7 @@ func evaluate_expression(expression : String):
 				cur += 1
 	
 	if it < 0:
+		return expression
 		assert(0)
 
 	## --------------------------------------------------
@@ -581,11 +593,17 @@ func query(qname:String):
 		"GD_U", "GD_L", "GD_D", "GD_R", "GD_UL", "GD_LU", "GD_DR", "GD_RD",\
 		"GD_UR", "GD_LD", "GD_DL", "GD_RU":
 			qname = qname.right(3)
-			var result = Player.get_dist(qname)
+			var result :float= Player.get_dist(qname)
+			if abs(result) < 0.02:
+				result = 0
 #			prints("query(%s) : %s" % [qname, result])
 			return result
+		
 		"ON_FLOOR":
 			return Player.on_floor()
+		
+		"POS":
+			return GLOBAL.Player.global_position
 		_:
 			pass
 

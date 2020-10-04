@@ -6,8 +6,11 @@
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="Level" parent="." instance=ExtResource( 2 )]
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
-position = Vector2( 32, 183.833 )
+position = Vector2( 32, 186 )
