@@ -23,8 +23,8 @@ config/icon="res://icon.png"
 
 LOG="*res://LogUtils.gd"
 GLOBAL="*res://Global.gd"
-SAVE="*res://save.gd"
 SCENE="*res://SceneTransitionManager.gd"
+SAVE="*res://SaveManager.tscn"
 
 [debug]
 

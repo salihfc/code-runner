@@ -2,6 +2,7 @@ extends Node
 
 var Player
 var input_text_editor : TextEdit
+var current_level = 0
 
 enum DIRECTION {
 	UP = 0,
@@ -73,3 +74,5 @@ var camera_position = [
 	Vector2(-640, 360),
 	Vector2(640, 360),
 ]
+
+var auto_save_frequency :float= 60.0
