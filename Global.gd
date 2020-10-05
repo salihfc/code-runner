@@ -65,3 +65,11 @@ var keywords = [
 	"D" ,
 	
 ]
+
+
+var camera_position = [
+	Vector2(-640, -360),
+	Vector2(640, -360),
+	Vector2(-640, 360),
+	Vector2(640, 360),
+]

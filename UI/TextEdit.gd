@@ -42,8 +42,9 @@ func _ready() -> void:
 	for keyword in keywords:
 		add_keyword_color(keyword, keywords[keyword])
 	
-	text = SAVE.get_text()
 
+func load_level_text() -> void:
+	text = SAVE.get_text()
 
 func _on_Reset_pressed() -> void:
 	cursor_set_line(0)

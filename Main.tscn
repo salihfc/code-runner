@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Analyzer.gd" type="Script" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://UI/TextEdit.gd" type="Script" id=4]
 [ext_resource path="res://Player/PlayerController.gd" type="Script" id=5]
 [ext_resource path="res://Game.tscn" type="PackedScene" id=6]
+[ext_resource path="res://UI/LevelSelection.tscn" type="PackedScene" id=7]
+[ext_resource path="res://icon.png" type="Texture" id=8]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Label
@@ -33,6 +35,11 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="MainCamera" type="Camera2D" parent="."]
+position = Vector2( 640, 360 )
+current = true
+smoothing_enabled = true
 
 [node name="SaveTimer" type="Timer" parent="."]
 wait_time = 60.0
@@ -177,12 +184,20 @@ render_target_update_mode = 3
 
 [node name="Game" parent="ViewportContainer/Viewport" instance=ExtResource( 6 )]
 pause_mode = 1
+
+[node name="LevelSelection" parent="." instance=ExtResource( 7 )]
+margin_top = -720.0
+margin_right = 1280.0
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 662.224, -578.151 )
+texture = ExtResource( 8 )
 [connection signal="tree_exiting" from="." to="." method="_on_Main_tree_exiting"]
 [connection signal="timeout" from="SaveTimer" to="." method="_on_SaveTimer_timeout"]
 [connection signal="pressed" from="UI/Buttons/Analyze" to="Analyzer" method="_on_Analyze_pressed"]
 [connection signal="pressed" from="UI/Buttons/Stop" to="Analyzer" method="_on_Stop_pressed"]
-[connection signal="pressed" from="UI/Buttons/Reset" to="Analyzer" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="UI/TextEdit" method="_on_Reset_pressed"]
+[connection signal="pressed" from="UI/Buttons/Reset" to="Analyzer" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="ViewportContainer/Viewport/Game" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="UI/Clear" to="UI/Panel/Output" method="_on_Clear_pressed"]

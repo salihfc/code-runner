@@ -21,9 +21,10 @@ config/icon="res://icon.png"
 
 [autoload]
 
+LOG="*res://LogUtils.gd"
 GLOBAL="*res://Global.gd"
 SAVE="*res://save.gd"
-LOG="*res://LogUtils.gd"
+SCENE="*res://SceneTransitionManager.gd"
 
 [debug]
 
