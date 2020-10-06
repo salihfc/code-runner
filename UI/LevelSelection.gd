@@ -2,12 +2,13 @@ extends Control
 
 const button_prefab = preload("res://UI/LevelButton.tscn")
 onready var main = get_parent()
-onready var grid = $UI/GridContainer
+onready var grid = $UI/GridPanel/GridContainer
 
 #NOTE: temporary_static_data
 var button_data = [
 	"1",
 	"2",
+	"3",
 ]
 
 func _ready() -> void:

@@ -1,7 +1,6 @@
 extends Node2D
 
 onready var Game = $ViewportContainer/Viewport/Game
-onready var textEdit = $UI/TextEdit
 onready var saveTimer = $SaveTimer
 onready var camera = $MainCamera
 onready var analyzer = $Analyzer
@@ -14,10 +13,14 @@ enum {
 }
 
 func _ready() -> void:
+	GLOBAL.Main = self
+	
 	# stop the game
 	Game.pause_mode = PAUSE_MODE_STOP
 	change_camera_region(LEVEL_SELECTION)
-
+	#
+	GLOBAL.input_text_editor = $UI/TextEdit
+#	_on_level_selected("1")
 
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("exit"):
@@ -35,7 +38,7 @@ func _on_exit() -> void:
 
 
 func save_code() -> void:
-	SAVE.save(GLOBAL.current_level, textEdit.text)
+	SAVE.save(GLOBAL.current_level, GLOBAL.input_text_editor.text)
 
 
 func change_camera_region(idx : int) -> void:
@@ -49,11 +52,8 @@ func change_camera_region(idx : int) -> void:
 
 func _on_level_selected(level_name : String) -> void:
 	LOG.pr(1, "Level selection recognized [%s]" % level_name, "Main::_on_level_selected")
-	# Set up variables and load saved code
-	GLOBAL.current_level = level_name
-	textEdit.load_level_code()
 	# Load level
-	
+	Game.load_level(level_name)
 	# Change to Game Screem
 	change_camera_region(GAME)
 

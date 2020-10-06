@@ -1,8 +1,11 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://UI/LevelSelection.gd" type="Script" id=1]
+[ext_resource path="res://assets/backgrounds/LevelSelectionGridBackground.png" type="Texture" id=2]
+[ext_resource path="res://assets/fonts/theme.tres" type="Theme" id=3]
 
 [node name="LevelSelection" type="Control"]
+theme = ExtResource( 3 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -15,19 +18,41 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridContainer" type="GridContainer" parent="UI"]
+[node name="GridPanel" type="TextureRect" parent="UI"]
+margin_left = 240.0
+margin_top = 160.0
+margin_right = 1120.0
+margin_bottom = 600.0
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="UI/GridPanel"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -395.0
-margin_top = -193.0
-margin_right = 405.0
-margin_bottom = 207.0
-rect_min_size = Vector2( 800, 400 )
+margin_left = -400.0
+margin_top = -180.0
+margin_right = 400.0
+margin_bottom = 180.0
+rect_min_size = Vector2( 800, 360 )
 custom_constants/vseparation = 20
 custom_constants/hseparation = 60
 columns = 12
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="UI"]
+modulate = Color( 0.223529, 0.847059, 0.568627, 1 )
+margin_left = 280.0
+margin_top = 77.0
+margin_right = 1026.0
+margin_bottom = 124.0
+text = "SELECT LEVEL"
+align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }

@@ -1,5 +1,6 @@
 extends Node
 
+var Main
 var Player
 var input_text_editor : TextEdit
 var current_level = 0
@@ -76,3 +77,10 @@ var camera_position = [
 ]
 
 var auto_save_frequency :float= 60.0
+
+
+var LEVELS = {
+	"1" : "res://Levels/Level_1.tscn",
+	"2" : "res://Levels/Level_2.tscn",
+	"3" : "res://Levels/Level_3.tscn",
+}
