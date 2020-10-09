@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/fonts/theme.tres" type="Theme" id=1]
-[ext_resource path="res://assets/buttons/button_0.png" type="Texture" id=2]
+[ext_resource path="res://assets/fonts/new_theme.tres" type="Theme" id=1]
+[ext_resource path="res://assets/buttons/level_selection/button_0.png" type="Texture" id=2]
 [ext_resource path="res://UI/LevelButton.gd" type="Script" id=3]
-[ext_resource path="res://assets/buttons/button_1.png" type="Texture" id=4]
+[ext_resource path="res://assets/buttons/level_selection/button_1.png" type="Texture" id=4]
 
 [node name="LevelButton" type="Control"]
 anchor_right = 1.0

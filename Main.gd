@@ -5,6 +5,8 @@ onready var saveTimer = $SaveTimer
 onready var camera = $MainCamera
 onready var analyzer = $Analyzer
 
+var current_camera_region :int = 0
+
 enum {
 	TITLE = 0,
 	LEVEL_SELECTION,
@@ -24,8 +26,13 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("exit"):
-		_on_exit()
-	
+		
+		match current_camera_region:
+			TITLE:
+				_on_exit()
+			_:
+				change_camera_region(current_camera_region - 1)
+				
 	if Input.is_action_just_pressed("run"):
 		$Analyzer._on_Analyze_pressed()
 	
@@ -47,6 +54,7 @@ func change_camera_region(idx : int) -> void:
 		LOG.err("invalid region [%s]" % idx, "Main::change_camera_region")
 		assert(0)
 	
+	current_camera_region = idx
 	camera.global_position = GLOBAL.camera_position[idx]
 	
 

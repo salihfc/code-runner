@@ -2,7 +2,7 @@
 
 [ext_resource path="res://UI/LevelSelection.gd" type="Script" id=1]
 [ext_resource path="res://assets/backgrounds/LevelSelectionGridBackground.png" type="Texture" id=2]
-[ext_resource path="res://assets/fonts/theme.tres" type="Theme" id=3]
+[ext_resource path="res://assets/fonts/new_theme.tres" type="Theme" id=3]
 
 [node name="LevelSelection" type="Control"]
 theme = ExtResource( 3 )
