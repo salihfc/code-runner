@@ -3,8 +3,12 @@ extends Node2D
 onready var Player = $Player
 var player_start_pos
 
+signal level_completed(level_name)
+
 func _ready() -> void:
 	add_to_group("should_reset")
+	
+	connect("level_completed", PROGRESSION, "_on_level_completed")
 
 
 func load_level(level_name: String) -> void:
@@ -41,6 +45,8 @@ func _on_Reset_pressed() -> void:
 
 
 func on_player_win() -> void:
+	emit_signal("level_completed", GLOBAL.current_level)
+	
 	GLOBAL.Main._on_Back_pressed()
 	GLOBAL.reset_game() # clean-up of the won scene
 	
