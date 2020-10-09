@@ -1,9 +1,13 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://assets/fonts/new_theme.tres" type="Theme" id=1]
-[ext_resource path="res://assets/buttons/level_selection/button_0.png" type="Texture" id=2]
 [ext_resource path="res://UI/LevelButton.gd" type="Script" id=3]
-[ext_resource path="res://assets/buttons/level_selection/button_1.png" type="Texture" id=4]
+[ext_resource path="res://assets/buttons/level_selection/button_level_locked_normal.png" type="Texture" id=5]
+[ext_resource path="res://assets/buttons/level_selection/button_level_comp_hover.png" type="Texture" id=6]
+[ext_resource path="res://assets/buttons/level_selection/button_level_comp_normal.png" type="Texture" id=7]
+[ext_resource path="res://assets/buttons/level_selection/button_level_locked_hover.png" type="Texture" id=8]
+[ext_resource path="res://assets/buttons/level_selection/button_level_uncomp_hover.png" type="Texture" id=9]
+[ext_resource path="res://assets/buttons/level_selection/button_level_uncomp_normal.png" type="Texture" id=10]
 
 [node name="LevelButton" type="Control"]
 anchor_right = 1.0
@@ -16,14 +20,20 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+completed_texture_normal = ExtResource( 7 )
+completed_texture_hover = ExtResource( 6 )
+uncompleted_texture_normal = ExtResource( 10 )
+uncompleted_texture_hover = ExtResource( 9 )
+locked_texture_normal = ExtResource( 5 )
+locked_texture_hover = ExtResource( 8 )
 
 [node name="TextureButton" type="TextureButton" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 80, 80 )
+focus_mode = 0
 theme = ExtResource( 1 )
-texture_normal = ExtResource( 2 )
-texture_hover = ExtResource( 4 )
+enabled_focus_mode = 0
 expand = true
 stretch_mode = 2
 __meta__ = {

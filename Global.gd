@@ -80,10 +80,25 @@ var auto_save_frequency :float= 60.0
 
 
 var LEVELS = {
-	"1" : "res://Levels/Level_1.tscn",
-	"2" : "res://Levels/Level_2.tscn",
-	"3" : "res://Levels/Level_3.tscn",
-	"4" : "res://Levels/Level_4.tscn",
+	"1" : {
+		"path":"res://Levels/Level_1.tscn",
+		"prev":[],
+		},
+	
+	"2" : {
+		"path":"res://Levels/Level_2.tscn",
+		"prev":["1"],
+	},
+	
+	"3" : {
+		"path":"res://Levels/Level_3.tscn",
+		"prev":["2"],
+	},
+	
+	"4" : {
+		"path":"res://Levels/Level_4.tscn",
+		"prev":["3"],
+	},
 }
 
 

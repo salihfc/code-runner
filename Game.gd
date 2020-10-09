@@ -20,7 +20,7 @@ func load_level(level_name: String) -> void:
 	GLOBAL.current_level = level_name
 	GLOBAL.input_text_editor.load_level_code()
 	
-	var new_level = load(GLOBAL.LEVELS[level_name]).instance()
+	var new_level = load(GLOBAL.LEVELS[level_name]["path"]).instance()
 	new_level.Game = self
 	
 	$LevelParent.add_child(new_level)

@@ -18,4 +18,5 @@ func create_buttons() -> void:
 		var new_button = button_prefab.instance()
 		new_button.init(button_name)
 		new_button.connect("selected_level", main, "_on_level_selected")
+		new_button.add_to_group("level_buttons")
 		grid.add_child(new_button)

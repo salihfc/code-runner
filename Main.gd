@@ -68,6 +68,7 @@ func _on_level_selected(level_name : String) -> void:
 
 func _on_Main_tree_exiting() -> void:
 	save_code()
+	PROGRESSION.save()
 
 
 func _on_Save_pressed() -> void:
