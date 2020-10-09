@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Analyzer.gd" type="Script" id=2]
@@ -7,6 +7,14 @@
 [ext_resource path="res://Player/PlayerController.gd" type="Script" id=5]
 [ext_resource path="res://Game.tscn" type="PackedScene" id=6]
 [ext_resource path="res://UI/LevelSelection.tscn" type="PackedScene" id=7]
+
+[sub_resource type="Environment" id=2]
+background_mode = 4
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 1.2
+glow_blend_mode = 0
+glow_hdr_threshold = 0.8
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Label
@@ -34,6 +42,9 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 2 )
 
 [node name="MainCamera" type="Camera2D" parent="."]
 position = Vector2( 640, 360 )

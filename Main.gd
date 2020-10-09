@@ -28,10 +28,10 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("exit"):
 		
 		match current_camera_region:
-			TITLE:
+			TITLE, LEVEL_SELECTION:
 				_on_exit()
-			_:
-				change_camera_region(current_camera_region - 1)
+			GAME:
+				change_camera_region(LEVEL_SELECTION)
 				
 	if Input.is_action_just_pressed("run"):
 		$Analyzer._on_Analyze_pressed()

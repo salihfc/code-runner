@@ -1,9 +1,9 @@
 extends Node2D
 
-onready var tex = preload("res://assets/red_4x4.png")
+onready var tex = preload("res://assets/game/red_4x4.png")
 onready var parent = get_parent()
 
-var laser_names = [
+var ray_names = [
 	"U" ,
 	"L" ,
 	"R" ,
@@ -25,7 +25,7 @@ var laser_names = [
 var children = {}
 
 func _ready() -> void:
-	for child_name in laser_names:
+	for child_name in ray_names:
 		var new_child = Sprite.new()
 #		new_child.visible = false
 		new_child.texture = tex

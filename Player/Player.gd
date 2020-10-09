@@ -15,9 +15,14 @@ onready var movement = $MovementController
 onready var queue = $PositionQueue
 var ray_parent = "Rays/"
 
+
 func _ready() -> void:
 	GLOBAL.Player = self
+	add_to_group("should_reset")
 
+
+func reset() -> void:
+	LOG.pr(2, "Player RESET", "Player::reset")
 
 
 func _physics_process(delta: float) -> void:
@@ -104,3 +109,14 @@ func get_pos2(direction:int, side:int):
 	if ray.is_colliding():
 		return ray.get_collision_point()
 	return null
+
+
+
+func _on_death() -> void:
+	LOG.pr(2, "Player died", "Player::_on_death")
+	GLOBAL.reset_game()
+
+
+
+func _on_Hurtbox_body_entered(body: Node) -> void:
+	_on_death()

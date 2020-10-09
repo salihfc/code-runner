@@ -96,17 +96,29 @@ var _DELAY_ACTIVE := true
 
 
 func reset() -> void:
+	LOG.pr(2, "Analyzer RESET", "Analyzer::reset")
+	stop()
+	
 	lines = PoolStringArray([])
 	jump_table = {}
 	flag_lines = []
-	processing = false
 	current_line_processed = true
 	current_line = 1
 	first_cycle = true
+	
+#	processing = false
+#	text_edit.readonly = false
+#	get_parent().Game.pause_mode = PAUSE_MODE_STOP
+
+
+func stop() -> void:
+	processing = false
+	text_edit.readonly = false
+	get_parent().Game.pause_mode = PAUSE_MODE_STOP
 
 
 func _ready() -> void:
-	pass
+	add_to_group("should_reset")
 
 
 func _physics_process(delta: float) -> void:
@@ -691,11 +703,8 @@ func _on_Analyze_pressed() -> void:
 
 func _on_Stop_pressed() -> void:
 	reset()
-	text_edit.readonly = false
-	get_parent().Game.pause_mode = PAUSE_MODE_STOP
-	processing = false
-#	current_line = 0
 
 
 func _on_Reset_pressed() -> void:
 	_on_Stop_pressed()
+	current_line = 0

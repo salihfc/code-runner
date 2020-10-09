@@ -3,6 +3,10 @@ extends Node2D
 onready var Player = $Player
 var player_start_pos
 
+func _ready() -> void:
+	add_to_group("should_reset")
+
+
 func load_level(level_name: String) -> void:
 	
 	if not GLOBAL.LEVELS.has(level_name):
@@ -15,25 +19,29 @@ func load_level(level_name: String) -> void:
 	var new_level = load(GLOBAL.LEVELS[level_name]).instance()
 	new_level.Game = self
 	
+	$LevelParent.add_child(new_level)
+	
 	player_start_pos = new_level.get_node("StartPosition").global_position
 	Player.global_position = player_start_pos
 	
-	$LevelParent.add_child(new_level)
 
 
-func reset_level() -> void:
-	# TODO
-	reset_player()
+
+func reset() -> void:
+	LOG.pr(2, "Game RESET", "Game::reset")
+	reset_player_position()
 
 
-func reset_player() -> void:
+func reset_player_position() -> void:
 	Player.global_position = player_start_pos
 
 
 func _on_Reset_pressed() -> void:
-	reset_player()
+	reset()
 
 
 func on_player_win() -> void:
 	GLOBAL.Main._on_Back_pressed()
-	reset_level()
+	GLOBAL.reset_game() # clean-up of the won scene
+	
+	#TODO: add and save progression of the user

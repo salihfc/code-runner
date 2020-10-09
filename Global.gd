@@ -83,4 +83,12 @@ var LEVELS = {
 	"1" : "res://Levels/Level_1.tscn",
 	"2" : "res://Levels/Level_2.tscn",
 	"3" : "res://Levels/Level_3.tscn",
+	"4" : "res://Levels/Level_4.tscn",
 }
+
+
+func reset_game() -> void:
+	
+	var nodes = get_tree().get_nodes_in_group("should_reset")
+	for node in nodes:
+		node.call_deferred("reset")
