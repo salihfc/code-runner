@@ -8,7 +8,7 @@
 [ext_resource path="res://Game.tscn" type="PackedScene" id=6]
 [ext_resource path="res://UI/LevelSelection.tscn" type="PackedScene" id=7]
 
-[sub_resource type="Environment" id=2]
+[sub_resource type="Environment" id=1]
 background_mode = 4
 tonemap_mode = 3
 glow_enabled = true
@@ -16,7 +16,7 @@ glow_intensity = 1.2
 glow_blend_mode = 0
 glow_hdr_threshold = 0.8
 
-[sub_resource type="GDScript" id=1]
+[sub_resource type="GDScript" id=2]
 script/source = "extends Label
 
 onready var timer = $Timer
@@ -44,7 +44,7 @@ __meta__ = {
 }
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 2 )
+environment = SubResource( 1 )
 
 [node name="MainCamera" type="Camera2D" parent="."]
 position = Vector2( 640, 360 )
@@ -163,7 +163,7 @@ margin_left = 452.0
 margin_top = 17.0
 margin_right = 512.0
 margin_bottom = 37.0
-script = SubResource( 1 )
+script = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -220,8 +220,8 @@ margin_right = 1280.0
 [connection signal="timeout" from="SaveTimer" to="." method="_on_SaveTimer_timeout"]
 [connection signal="pressed" from="UI/Buttons/Analyze" to="Analyzer" method="_on_Analyze_pressed"]
 [connection signal="pressed" from="UI/Buttons/Stop" to="Analyzer" method="_on_Stop_pressed"]
-[connection signal="pressed" from="UI/Buttons/Reset" to="UI/TextEdit" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="Analyzer" method="_on_Reset_pressed"]
+[connection signal="pressed" from="UI/Buttons/Reset" to="UI/TextEdit" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="ViewportContainer/Viewport/Game" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="UI/Buttons/Back" to="." method="_on_Back_pressed"]

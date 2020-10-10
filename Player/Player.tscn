@@ -1,22 +1,22 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
-[ext_resource path="res://assets/game/blue_12x12.png" type="Texture" id=2]
+[ext_resource path="res://assets/game/generic/blue_12x12.png" type="Texture" id=2]
 [ext_resource path="res://Player/MovementController.gd" type="Script" id=3]
 [ext_resource path="res://Player/InputController.gd" type="Script" id=4]
 [ext_resource path="res://Player/PositionQueue.gd" type="Script" id=5]
 [ext_resource path="res://Player/debug/ray_hits.gd" type="Script" id=6]
-[ext_resource path="res://assets/game/white_4x4.png" type="Texture" id=7]
-
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 6, 6 )
+[ext_resource path="res://assets/game/generic/white_4x4.png" type="Texture" id=7]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 6, 6 )
 
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 6, 6 )
+
 [node name="Player" type="KinematicBody2D"]
 collision_layer = 32
-collision_mask = 0
+collision_mask = 4
 collision/safe_margin = 0.01
 script = ExtResource( 1 )
 
@@ -25,7 +25,7 @@ collision_layer = 64
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-shape = SubResource( 2 )
+shape = SubResource( 1 )
 
 [node name="bottom" type="Position2D" parent="."]
 visible = false
@@ -44,7 +44,7 @@ texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 
 [node name="MovementController" type="Node" parent="."]
 script = ExtResource( 3 )
@@ -140,5 +140,6 @@ smoothing_speed = 30.0
 
 [node name="Ray_hits" type="Node2D" parent="."]
 script = ExtResource( 6 )
+[connection signal="area_entered" from="Hurtbox" to="." method="_on_Hurtbox_area_entered"]
 [connection signal="body_entered" from="Hurtbox" to="." method="_on_Hurtbox_body_entered"]
 [connection signal="timeout" from="MovementController/JumpTimer" to="MovementController" method="_on_JumpTimer_timeout"]

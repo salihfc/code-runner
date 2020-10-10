@@ -1,6 +1,6 @@
 extends Node2D
 
-onready var tex = preload("res://assets/game/red_4x4.png")
+onready var tex = preload("res://assets/game/generic/red_4x4.png")
 onready var parent = get_parent()
 
 var ray_names = [

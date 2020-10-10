@@ -119,4 +119,10 @@ func _on_death() -> void:
 
 
 func _on_Hurtbox_body_entered(body: Node) -> void:
+	LOG.pr(2, "body:[%s] killed player" % body, "Player::_on_Hurtbox_body_entered")
+	_on_death()
+
+
+func _on_Hurtbox_area_entered(area: Area2D) -> void:
+	LOG.pr(2, "area:[%s] killed player" % area, "Player::_on_Hurtbox_area_entered")
 	_on_death()

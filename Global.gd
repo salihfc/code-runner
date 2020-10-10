@@ -99,6 +99,11 @@ var LEVELS = {
 		"path":"res://Levels/Level_4.tscn",
 		"prev":["3"],
 	},
+	
+	"5" : {
+		"path":"res://Levels/Level_5.tscn",
+		"prev":[],
+	},
 }
 
 
