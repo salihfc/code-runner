@@ -29,6 +29,12 @@ func load_level(level_name: String) -> void:
 	Player.global_position = player_start_pos
 	
 
+func clear() -> void:
+	# Delete any level require loading of the new level
+	var loaded = $LevelParent.get_children()
+	
+	for level in loaded:
+		level.queue_free()
 
 
 func reset() -> void:
@@ -50,4 +56,4 @@ func on_player_win() -> void:
 	GLOBAL.Main._on_Back_pressed()
 	GLOBAL.reset_game() # clean-up of the won scene
 	
-	#TODO: add and save progression of the user
+#	$LevelParent.get_child()

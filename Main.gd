@@ -61,6 +61,7 @@ func change_camera_region(idx : int) -> void:
 func _on_level_selected(level_name : String) -> void:
 	LOG.pr(1, "Level selection recognized [%s]" % level_name, "Main::_on_level_selected")
 	# Load level
+	Game.clear()
 	Game.load_level(level_name)
 	# Change to Game Screem
 	change_camera_region(GAME)

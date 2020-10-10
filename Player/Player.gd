@@ -19,6 +19,7 @@ var ray_parent = "Rays/"
 func _ready() -> void:
 	GLOBAL.Player = self
 	add_to_group("should_reset")
+	add_to_group("player")
 
 
 func reset() -> void:

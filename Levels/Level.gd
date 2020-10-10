@@ -18,3 +18,5 @@ func _on_Finish_body_entered(body: Node) -> void:
 	LOG.pr(2, "PLAYER SHOULD WIN", "Level::_on_Finish_area_entered")
 	if Game:
 		Game.on_player_win()
+		queue_free()
+#		call_deferred("queue_free")

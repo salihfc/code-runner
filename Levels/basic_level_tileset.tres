@@ -4,8 +4,6 @@
 [ext_resource path="res://assets/game/generic/gray1_16x16.png" type="Texture" id=2]
 [ext_resource path="res://assets/game/tilesets/tileset_112x122.png" type="Texture" id=3]
 
-
-
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 0, 0, 16, 0, 16, 16, 0, 16 )
 polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
