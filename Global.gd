@@ -109,7 +109,15 @@ var LEVELS = {
 		"path":"res://Levels/Level_6.tscn",
 		"prev":[],
 	},
+	
+	"7" : {
+		"path":"res://Levels/Level_7.tscn",
+		"prev":[],
+	},
 }
+
+
+
 
 
 func reset_game() -> void:

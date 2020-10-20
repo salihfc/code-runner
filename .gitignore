@@ -4,3 +4,7 @@
 *txt
 *assets
 *.save
+*exe
+*pck
+*ico
+export_presets.cfg

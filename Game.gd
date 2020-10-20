@@ -14,7 +14,8 @@ func _ready() -> void:
 func load_level(level_name: String) -> void:
 	
 	if not GLOBAL.LEVELS.has(level_name):
-		LOG.err("could not found the level [%s]" % level_name, "Game::load_level")
+		LOG.err("could not found the level [%s]" % level_name,\
+		"Game::load_level")
 		assert(0)
 	
 	GLOBAL.current_level = level_name

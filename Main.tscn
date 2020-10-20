@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Analyzer.gd" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Player/PlayerController.gd" type="Script" id=5]
 [ext_resource path="res://Game.tscn" type="PackedScene" id=6]
 [ext_resource path="res://UI/LevelSelection.tscn" type="PackedScene" id=7]
+[ext_resource path="res://UI/TitleScreen.tscn" type="PackedScene" id=8]
 
 [sub_resource type="Environment" id=1]
 background_mode = 4
@@ -216,13 +217,19 @@ pause_mode = 1
 [node name="LevelSelection" parent="." instance=ExtResource( 7 )]
 margin_top = -720.0
 margin_right = 1280.0
+
+[node name="TitleScreen" parent="." instance=ExtResource( 8 )]
+margin_left = -1280.0
+margin_top = -720.0
+margin_right = -1280.0
+margin_bottom = -720.0
 [connection signal="tree_exiting" from="." to="." method="_on_Main_tree_exiting"]
 [connection signal="timeout" from="SaveTimer" to="." method="_on_SaveTimer_timeout"]
 [connection signal="pressed" from="UI/Buttons/Analyze" to="Analyzer" method="_on_Analyze_pressed"]
 [connection signal="pressed" from="UI/Buttons/Stop" to="Analyzer" method="_on_Stop_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="Analyzer" method="_on_Reset_pressed"]
-[connection signal="pressed" from="UI/Buttons/Reset" to="ViewportContainer/Viewport/Game" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Reset" to="UI/TextEdit" method="_on_Reset_pressed"]
+[connection signal="pressed" from="UI/Buttons/Reset" to="ViewportContainer/Viewport/Game" method="_on_Reset_pressed"]
 [connection signal="pressed" from="UI/Buttons/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="UI/Buttons/Back" to="." method="_on_Back_pressed"]
 [connection signal="pressed" from="UI/Clear" to="UI/Panel/Output" method="_on_Clear_pressed"]

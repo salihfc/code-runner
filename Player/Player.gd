@@ -27,44 +27,20 @@ func reset() -> void:
 
 
 func _physics_process(delta: float) -> void:
-#	if _is_on_floor():
-#		velocity.y = 0
-#	else:
-#	velocity.y += GRAVITY*delta
-#
-#	if abs(velocity.x) > SLOW:
-#		if velocity.x > 0:
-#			velocity.x -= SLOW
-#		else:
-#			velocity.x += SLOW
-#	else:
-#		velocity.x = 0
-#
-#	velocity.x = clamp(velocity.x, -MAX_VELOCITY, MAX_VELOCITY)
 
 	if velocity.x != 0.0:
 		velocity.x = (velocity.x / (abs(velocity.x))) * SPEED
 	
-#	var old_vel_y :float= velocity.y
 	velocity.y += GRAVITY * delta
-	
 	velocity = move_and_slide(velocity, Vector2.UP)
-#	velocity = move_and_slide(velocity, Vector2.UP)
-#	velocity = move_and_slide(Vector2(velocity.x, (velocity.y + old_vel_y) / 2.0), Vector2.UP)
-	
 	queue.push(position.y)
 
 	velocity.x = 0
 
 
 func _is_on_floor() -> bool:
-#	prints("distance to floor: [%s] <=? [%s]"\
-# % [get_dist(GLOBAL.DIRECTION.DOWN), $Sprite.get_rect().size.x / 2 + 0.01])
-
-#	LOG.pr(2, "is_on_floor:%s"%(get_dist(GLOBAL.DIRECTION.DOWN) <= 0.01), "Player::_is_on_floor")
 	return (get_dist(GLOBAL.DIRECTION.DOWN) <= 0.01)
 #	 or queue.is_same()
-
 
 
 func get_dist(direction:int) -> float:
@@ -80,7 +56,10 @@ func get_dist(direction:int) -> float:
 
 func get_dist2(direction:int, side:int) -> float:
 	var rname = "%sRay%s%s"\
-	% [ray_parent ,GLOBAL.direction_name[direction], GLOBAL.direction_to_letter[side]]
+	% [
+	ray_parent,
+	GLOBAL.direction_name[direction], 
+	GLOBAL.direction_to_letter[side]]
 	
 	var ray = get_node(rname)
 	
@@ -103,7 +82,10 @@ func get_pos(direction:int):
 
 func get_pos2(direction:int, side:int):
 	var rname = "%sRay%s%s"\
-	% [ray_parent ,GLOBAL.direction_name[direction], GLOBAL.direction_to_letter[side]]
+	% [
+	ray_parent,
+	GLOBAL.direction_name[direction],
+	GLOBAL.direction_to_letter[side]]
 	
 	var ray = get_node(rname)
 	
@@ -120,10 +102,14 @@ func _on_death() -> void:
 
 
 func _on_Hurtbox_body_entered(body: Node) -> void:
-	LOG.pr(2, "body:[%s] killed player" % body, "Player::_on_Hurtbox_body_entered")
+	LOG.pr(2, "body:[%s] killed player" % body,\
+	"Player::_on_Hurtbox_body_entered")
+	
 	_on_death()
 
 
 func _on_Hurtbox_area_entered(area: Area2D) -> void:
-	LOG.pr(2, "area:[%s] killed player" % area, "Player::_on_Hurtbox_area_entered")
+	LOG.pr(2, "area:[%s] killed player" % area,\
+	"Player::_on_Hurtbox_area_entered")
+	
 	_on_death()

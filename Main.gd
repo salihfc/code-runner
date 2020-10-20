@@ -19,7 +19,7 @@ func _ready() -> void:
 	
 	# stop the game
 	Game.pause_mode = PAUSE_MODE_STOP
-	change_camera_region(LEVEL_SELECTION)
+	change_camera_region(TITLE)
 	#
 	GLOBAL.input_text_editor = $UI/TextEdit
 #	_on_level_selected("1")
@@ -59,7 +59,9 @@ func change_camera_region(idx : int) -> void:
 	
 
 func _on_level_selected(level_name : String) -> void:
-	LOG.pr(1, "Level selection recognized [%s]" % level_name, "Main::_on_level_selected")
+	LOG.pr(1, "Level selection recognized [%s]" % level_name,\
+	"Main::_on_level_selected")
+
 	# Load level
 	Game.clear()
 	Game.load_level(level_name)
