@@ -53,3 +53,10 @@ func _ready() -> void:
 
 func dissipate() -> void:
 	$AnimationPlayer.play("Dissipate")
+	
+	$Tween.interpolate_method(self, "set_diss_level", 0, 1, 0.3)
+
+
+func set_diss_level(f : float) -> void:
+#	$Sprite.
+	pass
